@@ -10,8 +10,6 @@ Allocates the instance types by their prices. The instance types that have highe
 
 ## Optimal Solution
 
-Uses a linear programming model to solve the problem:
-
-![Linear programming model](./lp_model.png)
+The optimal solution is modelled as the Knapsack Problem, in which the capacity of the knapsack is the savings plans value available and the items are the instances. For each instance, the weight is the savings plans price and the value is the on-demand price. The instances that are not allocated to the knapsack go to the on-demand market.
 
 
