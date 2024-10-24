@@ -3,7 +3,7 @@
 
 ## Files templates
 
-Contains the templates that the files should follow throughout this problem. All of them are csv files.
+Contains the templates that the files should follow throughout this project. All of them are csv files.
 
 ### Demand
 
@@ -13,12 +13,12 @@ The demand contains the information about number of instances used of each insta
 
 Contains the prices used by AWS. For the reserve markets (including savings plans), AWS provides 3 different purchasing options. In the all upfront option, the entire value of the reserve is paid at the beginning, while, with the no upfront option, the costumer should pay a hourly value. The partial upfront option is a mix of the two others, consisting of both upfront and hourly payments. The prices csv should contain 6 columns:
 
-- flavor:
+- flavor: name of the instance type;
 - OnDemand: hourly price for the on-demand market;
 - RAllUpfront1Y: upfront price for the all upfront option of the reserve or savings plans market;
 - RPartialUpfront1YUP: upfront price for the partial upfront option of the reserve or savings plans market;
 - RPartialUpfront1YM: hourly price for the partial upfront option of the reserve or savings plans market;
-- RNoUpfront1YM: hourly price for the no upfront option of the reserve or savings plans market;
+- RNoUpfront1YM: hourly price for the no upfront option of the reserve or savings plans market.
 
 ## Objects
 
