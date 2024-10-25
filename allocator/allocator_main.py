@@ -1,22 +1,23 @@
 import click
+import pandas as pd
 from allocator_aux import InstancePrices
 
 @click.command()
 @click.argument('input_path', type=click.Path(exists=True))
 @click.argument('prices_path', type=click.Path(exists=True))
 @click.argument('cost_allocation_path', type=click.Path(exists=True))
-@click.argument('output_path', type=click.Path(exists=False))
+@click.argument('output_dir', type=click.Path(exists=False))
 @click.option('--res_duration',
               type=int,
               default=8760)
-def main(demand_path, prices_path, cost_allocation_path, output_path, res_duration):
+def main(demand_path, prices_path, cost_allocation_path, output_dir, res_duration):
     demand = read_demand(demand_path)
     prices = read_prices(prices_path)
     available_savings_plans = read_savings_plans(cost_allocation_path, res_duration)
 
-    allocation = allocate(demand, prices, available_savings_plans, res_duration)
+    instance_allocation, cost_allocation = allocate(demand, prices, available_savings_plans, res_duration)
     
-    write_allocation(allocation, output_path)
+    write_allocation(instance_allocation, cost_allocation, output_dir)
 
 def allocate(demand, prices, available_savings_plans):
     return 
@@ -94,8 +95,32 @@ def read_savings_plans(cost_allocation_path, res_duration):
 
     return available_savings_plans
 
-def write_allocation(output_path):
-     #TODO
+def write_allocation(instance_alloc, cost_alloc, output_path):
+    final_t = len(cost_alloc['OnDemand'])
+
+    #instance allocation
+    instance_alloc_df = {'timestamp': [t for t in range(final_t)],
+                        'market': ['on_demand', 'r_all', 'r_partial', 'r_no'] * final_t,
+                        }
+
+    instance_types = list(instance_alloc['OnDemand'].keys())
+
+    for instance_type in instance_types:
+        instance_alloc_df[instance_type] = []
+        for t in range(final_t):
+            od = instance_alloc['OnDemand'][instance_type][t]
+            r_all = instance_alloc['RAll'][instance_type][t]
+            r_partial = instance_alloc['RPartial'][instance_type][t]
+            r_no = instance_alloc['RNo'][instance_type][t]
+            
+            instance_alloc_df[instance_type] += [od, r_all, r_partial, r_no]
+
+    instance_alloc_df.to_csv(f'{output_path}/alloc_instance.csv', index=False)
+
+    #cost allocation
+    cost_alloc_df = pd.DataFrame(cost_alloc)
+    cost_alloc_df.insert(0, 'timestamp', [t for t in range(final_t)])
+    cost_alloc_df.to_csv(f'{output_path}/alloc_cost.csv', index=False)
 
 if __name__ == '__main__':
     main()

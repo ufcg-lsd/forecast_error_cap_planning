@@ -26,16 +26,16 @@ The result of an allocation consists of two files.
 
 The first one contains the number of instances in each market over time:
 
-| timestamp |       market      | c4.2xlarge | c5.large | ... | md5.large |
-|-----------|-------------------|------------|----------|-----|-----------|
-|     0     |     on_demand     |     10     |    15    | ... |    14     |
-|     0     |    sp_noupfront   |      0     |     0    | ... |     0     |
-|     0     | sp_partialupfront |     10     |     0    | ... |     1     |
-|     0     |   sp_allupfront   |      5     |     5    | ... |     0     |
-|   3600    |     on_demand     |     10     |    15    | ... |    14     |
-|   3600    |    sp_noupfront   |      0     |     0    | ... |     0     |
-|   3600    | sp_partialupfront |     10     |     0    | ... |     1     |
-|   3600    |   sp_allupfront   |      5     |     5    | ... |     0     |
+| timestamp |    market   | c4.2xlarge | c5.large | ... | md5.large |
+|-----------|-------------|------------|----------|-----|-----------|
+|     0     |  on_demand  |     10     |    15    | ... |    14     |
+|     0     |    r_all    |      0     |     0    | ... |     0     |
+|     0     |  r_partial  |     10     |     0    | ... |     1     |
+|     0     |    r_no     |      5     |     5    | ... |     0     |
+|   3600    |  on_demand  |     10     |    15    | ... |    14     |
+|   3600    |    r_all    |      0     |     0    | ... |     0     |
+|   3600    |  r_partial  |     10     |     0    | ... |     1     |
+|   3600    |    r_no     |      5     |     5    | ... |     0     |
 
 * Timestamp: current time on your allocation
 * Market: this column represents a specific market type at this timestamp
@@ -78,8 +78,7 @@ The instances allocation is an object containing 5 attributes, one for each mark
 ```
 instance_allocation = {'OnDemand': {'a1.large': [], 't1.medium': []},
                      'RAll': {'a1.large': [], 't1.medium': []}, 
-                     'RPartialUp': {'a1.large': [], 't1.medium': []}, 
-                     'RPartialHr': {'a1.large': [], 't1.medium': []}, 
+                     'RPartial': {'a1.large': [], 't1.medium': []}, 
                      'RNo': {'a1.large': [], 't1.medium': []}}
 ```
 
