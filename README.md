@@ -69,7 +69,7 @@ The demand for instances is a dictionary. The keys are the names of the instance
 
 ### Prices
 
-The prices are stored in dictionary with the names of instance types as keys and objects of InstancePrices as values. This class has 9 attributes, containing the prices for the on-demand, reserve and savings plans. For the reserve and savings plans markets, contains the prices for each one of the 3 different purchasing options.
+The prices are stored in dictionary with the names of instance types as keys and objects of InstancePrices as values. This class has 5 attributes, containing the prices for the on-demand and reserve or savings plans. For the reserve or savings plans markets, contains the prices for each one of the 3 different purchasing options.
 
 ### Allocation
 

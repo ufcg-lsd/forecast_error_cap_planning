@@ -20,6 +20,9 @@ def main(demand_path, prices_path, cost_allocation_path, output_dir, res_duratio
     write_allocation(instance_allocation, cost_allocation, output_dir)
 
 def allocate(demand, prices, available_savings_plans):
+    instance_allocation = 
+
+    update_cost_allocation()
     return 
 
 def read_demand(demand_path):
