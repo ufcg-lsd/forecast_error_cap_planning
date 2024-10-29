@@ -1,6 +1,7 @@
 import click
 from allocator_aux import read_demand, read_prices, read_cost_allocation, write_allocation, InstancePrices
 import alloc_heuristic
+import alloc_knapsack
 
 @click.command()
 @click.argument('input_path', type=click.Path(exists=True))
@@ -28,6 +29,8 @@ def allocate(demand, prices, cost_allocation, res_duration, alloc_method):
     match alloc_method:
         case 1:
             instance_allocation = alloc_heuristic.alloc(demand, prices, available_sp, res_duration)
+        case 2:
+            instance_allocation = alloc_knapsack.alloc(demand, prices, available_sp, res_duration)
 
     cost_allocation = calculate_costs(cost_allocation, instance_allocation, prices)
     
@@ -47,7 +50,7 @@ def get_available_savings_plans(cost_allocation, res_duration):
         for t in range(curr_t, curr_t + res_duration):
             available_savings_plans[t] += (up_all_upfront + up_partial_upfront) / res_duration
 
-        current_t += 1
+        curr_t += 1
 
     return available_savings_plans
 

@@ -1,9 +1,9 @@
 from ortools.algorithms.python import knapsack_solver
 
-def main(demand, prices, available_savings_plans):
-    for t in range(available_savings_plans):
+def alloc(demand, prices, available_sp, res_duration):
+    for t in range(available_sp):
         demand_sel = {key: value[t] for key, value in demand.items()}
-        allocate_hour(demand_sel, prices, available_savings_plans[t])
+        allocate_hour(demand_sel, prices, available_sp[t])
 
 def allocate_hour(demand, prices, available_savings_plans):
     solver = knapsack_solver.KnapsackSolver(

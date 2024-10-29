@@ -48,7 +48,23 @@ def read_prices(prices_path):
     return prices
 
 def read_cost_allocation(cost_allocation_path):
-    return
+    cost_allocation = {'OnDemand': [], 'RAll': [], 'RPartialUp': [], 'RPartialHr': [], 'RNo': []}
+    with open(cost_allocation_path, mode='r') as file:
+            header = file.readline().split(',')
+            
+            while True:
+                line = file.readline()
+                if not line:
+                    break
+                line = line.split(',')
+
+                cost_allocation['OnDemand'].append(line[1])
+                cost_allocation['RAll'].append(line[2])
+                cost_allocation['RPartialUp'].append(line[3])
+                cost_allocation['RPartialHr'].append(line[4])
+                cost_allocation['RNo'].append(line[5])
+
+    return cost_allocation
 
 def write_allocation(instance_alloc, cost_alloc, output_path):
     final_t = len(cost_alloc['OnDemand'])
