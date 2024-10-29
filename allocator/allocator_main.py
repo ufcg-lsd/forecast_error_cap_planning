@@ -1,5 +1,5 @@
 import click
-from allocator_aux import read_demand, read_prices, read_cost_allocation, write_allocation, InstancePrices
+from allocator_aux import read_demand, read_prices, read_cost_allocation, write_allocation
 import alloc_heuristic
 import alloc_knapsack
 
@@ -32,7 +32,7 @@ def allocate(demand, prices, cost_allocation, res_duration, alloc_method):
         case 2:
             instance_allocation = alloc_knapsack.alloc(demand, prices, available_sp, res_duration)
 
-    cost_allocation = calculate_costs(cost_allocation, instance_allocation, prices)
+    cost_allocation = update_cost_alloc(cost_allocation, instance_allocation, prices)
     
     return instance_allocation, cost_allocation
 
@@ -53,6 +53,19 @@ def get_available_savings_plans(cost_allocation, res_duration):
         curr_t += 1
 
     return available_savings_plans
+
+def update_cost_alloc(cost_allocation, instance_allocation, prices):
+    final_t = len(cost_allocation['OnDemand']) 
+    
+    for t in range(final_t):
+        cost_allocation['OnDemand'][t] = 0
+
+        for instance_type in instance_allocation['OnDemand']:
+            demand = instance_allocation['OnDemand'][instance_type][t]
+            price = prices[instance_type].on_demand
+            cost_allocation['OnDemand'][t] += demand * price
+    
+    return cost_allocation
 
 if __name__ == '__main__':
     main()
