@@ -1,11 +1,23 @@
 from ortools.algorithms.python import knapsack_solver
 
-def alloc(demand, prices, available_sp, res_duration):
+def alloc(demand, prices, available_sp, market_option):
+    instance_allocation = initiate_instance_allocation(demand)
+
     for t in range(available_sp):
         demand_sel = {key: value[t] for key, value in demand.items()}
-        allocate_hour(demand_sel, prices, available_sp[t])
+        packed_items = knapsack(demand_sel, prices, market_option, available_sp[t])
 
-def allocate_hour(demand, prices, available_savings_plans):
+        for instance_type in packed_items:
+            instance_allocation[market_option][instance_type][t] += 1
+
+        for instance_type in demand:
+            num_sp = instance_allocation[market_option][instance_type][t]
+            num_od = demand[instance_type][t] - num_sp
+            instance_allocation['OnDemand'][instance_type][t] = num_od
+    
+    return instance_allocation
+
+def knapsack(demand, prices, market_option, available_sp):
     solver = knapsack_solver.KnapsackSolver(
         knapsack_solver.SolverType.KNAPSACK_MULTIDIMENSION_BRANCH_AND_BOUND_SOLVER
     )
@@ -13,36 +25,37 @@ def allocate_hour(demand, prices, available_savings_plans):
     # each instance as a string, if there is more than one instance of the same type, 
     # it appears more than once in the list
     instance_types = []
-    for instance_type in list(demand.keys()):
+    for instance_type in demand:
         quantity = demand[instance_type]
         for i in range(quantity):
             instance_types.append(instance_type)
-
-    #values: on-demand prices
-    values = []
-    #weights: savings plans prices
-    weights = [[]]
-
+    
+    values = [] #on-demand prices
+    weights = [[]] #savings plans prices
     for instance_type in instance_types:
-        values.append[prices[instance_type]]
-        weights[0].append[prices[instance_type]]
+        values.append(prices[instance_type]['OnDemand'])
+        weights[0].append(prices[instance_type][market_option])
 
-    #capacities: savings plans active value
-    capacities = [available_savings_plans]
+    capacities = [available_sp] #savings plans active value
 
     solver.init(values, weights, capacities)
     computed_value = solver.solve()
 
     packed_items = []
-    packed_weights = []
-    instances_savings_plans = []
-    total_weight = 0
-    print("Total value =", computed_value)
     for i in range(len(values)):
         if solver.best_solution_contains(i):
-            packed_items.append(i)
-            packed_weights.append(weights[0][i])
-            total_weight += weights[0][i]
-    print("Total weight:", total_weight)
-    print("Packed items:", packed_items)
-    print("Packed_weights:", packed_weights)
+            packed_items.append(instance_types[i])
+
+    return packed_items
+
+def initiate_instance_allocation(demand):
+    instance_allocation = {'OnDemand': {}, 'RAll': {}, 'RPartial': {}, 'RNo': {}}
+    for instance_type in demand:
+        instance_demand = demand[instance_type]
+        
+        instance_allocation['RAll'][instance_type] = [0 for _ in range(len(instance_demand))]
+        instance_allocation['RPartial'][instance_type] = [0 for _ in range(len(instance_demand))]
+        instance_allocation['RNo'][instance_type] = [0 for _ in range(len(instance_demand))]
+        instance_allocation['OnDemand'][instance_type] = [0 for _ in range(len(instance_demand))]
+
+    return instance_allocation
