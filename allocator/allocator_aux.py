@@ -44,7 +44,7 @@ def read_prices(prices_path):
                 hr_partial_upfront = float(line[4])
                 hr_no_upfront = float(line[5])
 
-                prices[instance_type] = InstancePrices(on_demand_hour, up_all_upfront, up_partial_upfront, hr_partial_upfront, hr_no_upfront, up_all_upfront, up_partial_upfront, hr_partial_upfront, hr_no_upfront)
+                prices[instance_type] = InstancePrices(on_demand_hour, up_all_upfront, up_partial_upfront, hr_partial_upfront, hr_no_upfront)
     return prices
 
 def read_cost_allocation(cost_allocation_path):
@@ -101,7 +101,7 @@ class InstancePrices:
         self.hr_partial_upfront = hr_partial_upfront
         self.hr_no_upfront = hr_no_upfront
     
-    def get_effective_hourly_rate(market, res_duration):
+    def get_effective_hourly_rate(self, market, res_duration):
         match market:
             case 'OnDemand':
                 return self.on_demand

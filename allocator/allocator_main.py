@@ -57,7 +57,7 @@ def get_available_savings_plans(cost_allocation, market_option, res_duration):
                 hr_value = cost_allocation['RNo'][curr_t]
     
         available_savings_plans[curr_t] += hr_value
-        for t in range(curr_t, curr_t + res_duration):
+        for t in range(curr_t, min(curr_t + res_duration, final_t)):
             available_savings_plans[t] += up_value / res_duration
 
         curr_t += 1
