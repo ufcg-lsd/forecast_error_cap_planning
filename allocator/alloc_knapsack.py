@@ -1,11 +1,11 @@
 from ortools.algorithms.python import knapsack_solver
 
-def alloc(demand, prices, available_sp, market_option):
+def alloc(demand, prices, available_sp, market_option, res_duration):
     instance_allocation = initiate_instance_allocation(demand)
 
-    for t in range(available_sp):
+    for t in range(len(available_sp)):
         demand_sel = {key: value[t] for key, value in demand.items()}
-        packed_items = knapsack(demand_sel, prices, market_option, available_sp[t])
+        packed_items = knapsack(demand_sel, prices, market_option, available_sp[t], res_duration)
 
         for instance_type in packed_items:
             instance_allocation[market_option][instance_type][t] += 1
@@ -17,9 +17,10 @@ def alloc(demand, prices, available_sp, market_option):
     
     return instance_allocation
 
-def knapsack(demand, prices, market_option, available_sp):
+def knapsack(demand, prices, market_option, available_sp, res_duration):
     solver = knapsack_solver.KnapsackSolver(
-        knapsack_solver.SolverType.KNAPSACK_MULTIDIMENSION_BRANCH_AND_BOUND_SOLVER
+        knapsack_solver.SolverType.KNAPSACK_MULTIDIMENSION_BRANCH_AND_BOUND_SOLVER,
+        "KnapsackExample",
     )
 
     # each instance as a string, if there is more than one instance of the same type, 
@@ -33,8 +34,8 @@ def knapsack(demand, prices, market_option, available_sp):
     values = [] #on-demand prices
     weights = [[]] #savings plans prices
     for instance_type in instance_types:
-        values.append(prices[instance_type]['OnDemand'])
-        weights[0].append(prices[instance_type][market_option])
+        values.append(prices[instance_type].on_demand)
+        weights[0].append(prices[instance_type].get_effective_hourly_rate(market_option, res_duration))
 
     capacities = [available_sp] #savings plans active value
 

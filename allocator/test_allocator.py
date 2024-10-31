@@ -119,3 +119,66 @@ class TestAllocator(unittest.TestCase):
         
         self.assertDictEqual(instance_allocation_res, instance_allocation)
         self.assertDictEqual(cost_allocation_res, cost_allocation)
+
+    def testHeuristicTwoInstTypeRNo(self):
+        demand = {'a1.large': [3, 3, 3, 3, 3],
+                  'a1.medium': [5, 5, 5, 5, 5]}
+        prices = {'a1.large': InstancePrices(6, 0, 0, 0, 3),
+                  'a1.medium': InstancePrices(4, 0, 0, 0, 2)}
+        cost_allocation = {'OnDemand': [0, 0, 0, 0, 0], 
+                           'RAll': [0, 0, 0, 0, 0], 
+                           'RPartialUp': [0, 0, 0, 0, 0],
+                           'RPartialHr': [0, 0, 0, 0, 0] ,
+                           'RNo': [10, 10, 10, 10, 10]}
+        res_duration = 5
+        market_option = 'RNo'
+        alloc_method = 1
+
+        instance_allocation_res, cost_allocation_res = allocate(demand, prices, cost_allocation, res_duration, market_option, alloc_method)
+
+        instance_allocation = {'OnDemand': {'a1.large': [0, 0, 0, 0, 0], 'a1.medium': [5, 5, 5, 5, 5]},
+                     'RAll': {'a1.large': [0, 0, 0, 0, 0], 'a1.medium': [0, 0, 0, 0, 0]}, 
+                     'RPartial': {'a1.large': [0, 0, 0, 0, 0], 'a1.medium': [0, 0, 0, 0, 0]}, 
+                     'RNo': {'a1.large': [3, 3, 3, 3, 3], 'a1.medium': [0, 0, 0, 0, 0]}}
+        
+        cost_allocation = {'OnDemand': [20, 20, 20, 20, 20], 
+                           'RAll': [0, 0, 0, 0, 0], 
+                           'RPartialUp': [0, 0, 0, 0, 0], 
+                           'RPartialHr': [0, 0, 0, 0, 0], 
+                           'RNo': [10, 10, 10, 10, 10]}
+        
+        self.assertDictEqual(instance_allocation_res, instance_allocation)
+        self.assertDictEqual(cost_allocation_res, cost_allocation)
+
+#############################################################################
+
+    def testKnapsackTwoInstTypeRNo(self):
+        demand = {'a1.large': [3, 3, 3, 3, 3],
+                  'a1.medium': [5, 5, 5, 5, 5]}
+        prices = {'a1.large': InstancePrices(6, 0, 0, 0, 3),
+                  'a1.medium': InstancePrices(4, 0, 0, 0, 2)}
+        cost_allocation = {'OnDemand': [0, 0, 0, 0, 0], 
+                           'RAll': [0, 0, 0, 0, 0], 
+                           'RPartialUp': [0, 0, 0, 0, 0],
+                           'RPartialHr': [0, 0, 0, 0, 0] ,
+                           'RNo': [10, 10, 10, 10, 10]}
+        res_duration = 5
+        market_option = 'RNo'
+        alloc_method = 2
+
+        instance_allocation_res, cost_allocation_res = allocate(demand, prices, cost_allocation, res_duration, market_option, alloc_method)
+
+        instance_allocation = {'OnDemand': {'a1.large': [3, 3, 3, 3, 3], 'a1.medium': [0, 0, 0, 0, 0]},
+                     'RAll': {'a1.large': [0, 0, 0, 0, 0], 'a1.medium': [0, 0, 0, 0, 0]}, 
+                     'RPartial': {'a1.large': [0, 0, 0, 0, 0], 'a1.medium': [0, 0, 0, 0, 0]}, 
+                     'RNo': {'a1.large': [0, 0, 0, 0, 0], 'a1.medium': [5, 5, 5, 5, 5]}}
+        
+        cost_allocation = {'OnDemand': [18, 18, 18, 18, 18], 
+                           'RAll': [0, 0, 0, 0, 0], 
+                           'RPartialUp': [0, 0, 0, 0, 0], 
+                           'RPartialHr': [0, 0, 0, 0, 0], 
+                           'RNo': [10, 10, 10, 10, 10]}
+        
+        self.assertDictEqual(instance_allocation_res, instance_allocation)
+        self.assertDictEqual(cost_allocation_res, cost_allocation)
+

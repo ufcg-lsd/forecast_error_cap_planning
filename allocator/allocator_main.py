@@ -33,7 +33,7 @@ def allocate(demand, prices, cost_allocation, res_duration, market_option, alloc
         case 1:
             instance_allocation = alloc_heuristic.alloc(demand, prices, available_sp, market_option, res_duration)
         case 2:
-            instance_allocation = alloc_knapsack.alloc(demand, prices, available_sp, market_option)
+            instance_allocation = alloc_knapsack.alloc(demand, prices, available_sp, market_option, res_duration)
 
     cost_allocation = update_cost_alloc(cost_allocation, instance_allocation, prices)
     
