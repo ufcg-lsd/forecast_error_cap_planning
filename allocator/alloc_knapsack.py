@@ -1,5 +1,7 @@
 from ortools.algorithms.python import knapsack_solver
 
+FLOAT_PRECISION = 10**5
+
 def alloc(demand, prices, available_sp, market_option, res_duration):
     instance_allocation = initiate_instance_allocation(demand)
 
@@ -14,7 +16,7 @@ def alloc(demand, prices, available_sp, market_option, res_duration):
             num_sp = instance_allocation[market_option][instance_type][t]
             num_od = demand[instance_type][t] - num_sp
             instance_allocation['OnDemand'][instance_type][t] = num_od
-    
+        
     return instance_allocation
 
 def knapsack(demand, prices, market_option, available_sp, res_duration):
@@ -34,10 +36,12 @@ def knapsack(demand, prices, market_option, available_sp, res_duration):
     values = [] #on-demand prices
     weights = [[]] #savings plans prices
     for instance_type in instance_types:
-        values.append(prices[instance_type].on_demand)
-        weights[0].append(prices[instance_type].get_effective_hourly_rate(market_option, res_duration))
+        on_demand_price = prices[instance_type].on_demand
+        sp_price = prices[instance_type].get_effective_hourly_rate(market_option, res_duration)
+        values.append(int(round(on_demand_price * FLOAT_PRECISION, 0)))
+        weights[0].append(int(round(sp_price * FLOAT_PRECISION, 0)))
 
-    capacities = [available_sp] #savings plans active value
+    capacities = [int(round(available_sp * FLOAT_PRECISION, 0))] #savings plans active value
 
     solver.init(values, weights, capacities)
     computed_value = solver.solve()

@@ -168,10 +168,20 @@ class TestAllocator(unittest.TestCase):
 
         instance_allocation_res, cost_allocation_res = allocate(demand, prices, cost_allocation, res_duration, market_option, alloc_method)
 
-        instance_allocation = {'OnDemand': {'a1.large': [3, 3, 3, 3, 3], 'a1.medium': [0, 0, 0, 0, 0]},
+        instance_allocation_1 = {'OnDemand': {'a1.large': [3, 3, 3, 3, 3], 'a1.medium': [0, 0, 0, 0, 0]},
                      'RAll': {'a1.large': [0, 0, 0, 0, 0], 'a1.medium': [0, 0, 0, 0, 0]}, 
                      'RPartial': {'a1.large': [0, 0, 0, 0, 0], 'a1.medium': [0, 0, 0, 0, 0]}, 
                      'RNo': {'a1.large': [0, 0, 0, 0, 0], 'a1.medium': [5, 5, 5, 5, 5]}}
+
+        instance_allocation_2 = {'OnDemand': {'a1.large': [1, 1, 1, 1, 1], 'a1.medium': [3, 3, 3, 3, 3]},
+                     'RAll': {'a1.large': [0, 0, 0, 0, 0], 'a1.medium': [0, 0, 0, 0, 0]}, 
+                     'RPartial': {'a1.large': [0, 0, 0, 0, 0], 'a1.medium': [0, 0, 0, 0, 0]}, 
+                     'RNo': {'a1.large': [2, 2, 2, 2, 2], 'a1.medium': [2, 2, 2, 2, 2]}}
+
+        possible_instance_allocations = [
+            instance_allocation_1,
+            instance_allocation_2
+        ]
         
         cost_allocation = {'OnDemand': [18, 18, 18, 18, 18], 
                            'RAll': [0, 0, 0, 0, 0], 
@@ -179,6 +189,6 @@ class TestAllocator(unittest.TestCase):
                            'RPartialHr': [0, 0, 0, 0, 0], 
                            'RNo': [10, 10, 10, 10, 10]}
         
-        self.assertDictEqual(instance_allocation_res, instance_allocation)
+        self.assertIn(instance_allocation_res, possible_instance_allocations)
         self.assertDictEqual(cost_allocation_res, cost_allocation)
 
