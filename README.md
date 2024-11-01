@@ -73,7 +73,7 @@ The prices are stored in dictionary with the names of instance types as keys and
 
 ### Allocation
 
-The instances allocation is an object containing 5 attributes, one for each market option. Each market contains another dictionary, with the instance types as keys and a list of integers as values. This list represents the number of instances of that instance type allocated to the market over time.
+The instances allocation is a dictionary containing 4 attributes, one for each market option. Each market contains another dictionary, with the instance types as keys and a list of integers as values. This list represents the number of instances of that instance type allocated to the market over time.
 
 ```
 instance_allocation = {'OnDemand': {'a1.large': [], 't1.medium': []},
