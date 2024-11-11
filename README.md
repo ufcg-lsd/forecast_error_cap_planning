@@ -19,14 +19,28 @@ The demand data file records the number of instances used for each instance type
 
 ### Prices
 
-Contains the prices used by AWS. For the reserve markets (including savings plans), AWS provides 3 different purchasing options. In the all upfront option, the entire value of the reserve is paid at the beginning, while, with the no upfront option, the costumer should pay a hourly value. The partial upfront option is a mix of the two others, consisting of both upfront and hourly payments. The prices csv should contain 6 columns:
+This CSV file contains AWS instance pricing details, covering both on-demand and reserved markets (including savings plans). For reserved markets, AWS offers three payment options:
+- **All Upfront**: The entire cost of the reserved instance is paid at the beginning of the term.
+- **Partial Upfront**: A portion is paid upfront, and the remainder is spread out with an hourly rate.
+- **No Upfront**: No upfront cost; payment is made entirely through an hourly rate.
 
-- flavor: name of the instance type;
-- OnDemand: hourly price for the on-demand market;
-- RAllUpfront1Y: upfront price for the all upfront option of the reserve or savings plans market;
-- RPartialUpfront1YUP: upfront price for the partial upfront option of the reserve or savings plans market;
-- RPartialUpfront1YM: hourly price for the partial upfront option of the reserve or savings plans market;
-- RNoUpfront1YM: hourly price for the no upfront option of the reserve or savings plans market.
+The CSV file includes the following six columns:
+- `flavor`: Name of the instance type.
+- `OnDemand`: Hourly rate for on-demand usage.
+- `RAllUpfront1Y`: Total upfront price for a one-year commitment under the all upfront option in the reserved or savings plans market.
+- `RPartialUpfront1YUP`: Upfront price for the one-year partial upfront option.
+- `RPartialUpfront1YM`: Hourly rate for the one-year partial upfront option.
+- `RNoUpfront1YM:` Hourly rate for the one-year no upfront option.
+
+| flavor    | OnDemand | RAllUpfront1Y | RPartialUpfront1YUP | RPartialUpfront1YM | RNoUpfront1YM |
+|-----------|----------|---------------|----------------------|--------------------|---------------|
+| c5.large  | 0.096    | 500           | 300                 | 0.02               | 0.04          |
+| t3.micro  | 0.0116   | 60            | 40                  | 0.005              | 0.007         |
+| m5.xlarge | 0.192    | 1000          | 600                 | 0.04               | 0.08          |
+| r5.large  | 0.126    | 650           | 390                 | 0.03               | 0.05          |
+| t3.small  | 0.023    | 120           | 80                  | 0.006              | 0.008         |
+
+
 
 ### Alocation
 
