@@ -94,6 +94,9 @@ def write_allocation(instance_alloc, cost_alloc, output_path):
     cost_alloc_df.to_csv(f'{output_path}/alloc_cost.csv', index=False)
 
 def initiate_instance_allocation(demand):
+    """ Creates an empty object of instance allocation
+    """
+    
     instance_allocation = {'OnDemand': {}, 'RAll': {}, 'RPartial': {}, 'RNo': {}}
     for instance_type in demand:
         instance_demand = demand[instance_type]

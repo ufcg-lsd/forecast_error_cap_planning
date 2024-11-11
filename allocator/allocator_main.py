@@ -27,6 +27,9 @@ def main(demand_path, prices_path, cost_allocation_path, output_dir, res_duratio
     write_allocation(instance_allocation, cost_allocation, output_dir)
 
 def allocate(demand, prices, cost_allocation, res_duration, market_option, alloc_method):
+    """ Receiving the input data as objects, calls the allocation strategies
+    """
+
     available_sp = get_available_savings_plans(cost_allocation, market_option, res_duration)
 
     match alloc_method:
@@ -40,6 +43,11 @@ def allocate(demand, prices, cost_allocation, res_duration, market_option, alloc
     return instance_allocation, cost_allocation
 
 def get_available_savings_plans(cost_allocation, market_option, res_duration):
+    """ Given a cost allocation, finds the available value for the savings plans market over time
+
+    The available value of the savings plans market is the hourly value that can be used to purchase instances.
+    """
+
     final_t = len(cost_allocation['OnDemand'])
     available_savings_plans = [0 for _ in range(final_t)]
     
@@ -65,6 +73,9 @@ def get_available_savings_plans(cost_allocation, market_option, res_duration):
     return available_savings_plans
 
 def update_cost_alloc(cost_allocation, instance_allocation, prices):
+    """ Adds the costs of the on-demand market in the cost allocation, given an instance allocation
+    """
+
     final_t = len(cost_allocation['OnDemand']) 
     
     for t in range(final_t):

@@ -1,6 +1,9 @@
 from allocator_aux import initiate_instance_allocation
 
 def alloc(demand, prices, available_sp, market_option, res_duration):
+    """ Allocates the demand in the on-demand and savings plans markets
+    """
+    
     instance_allocation = initiate_instance_allocation(demand)
     ordered_instance_types = sorted(prices, key=lambda x: prices[x].get_effective_hourly_rate(market_option, res_duration), reverse=True)
 

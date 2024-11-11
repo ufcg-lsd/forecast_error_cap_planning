@@ -4,6 +4,9 @@ from allocator_aux import initiate_instance_allocation
 FLOAT_PRECISION = 10**5
 
 def alloc(demand, prices, available_sp, market_option, res_duration):
+    """ Allocates the demand in the on-demand and savings plans markets
+    """
+    
     instance_allocation = initiate_instance_allocation(demand)
 
     for t in range(len(available_sp)):
@@ -21,6 +24,14 @@ def alloc(demand, prices, available_sp, market_option, res_duration):
     return instance_allocation
 
 def knapsack(demand, prices, market_option, available_sp, res_duration):
+    """ Solves the knapsack problem for savings plans
+
+    For one hour, chooses which instances should be allocated in the savings plans market.
+    The savings plans available value is the knapsack capacity and the instances are the items.
+    For each instance, its weight is the savings plans price and its value is the on-demand price.
+    The objective is to maximize the value inside the knapsack, given its capacity. 
+    """
+
     solver = knapsack_solver.KnapsackSolver(
         knapsack_solver.SolverType.KNAPSACK_MULTIDIMENSION_BRANCH_AND_BOUND_SOLVER,
         "KnapsackExample",
