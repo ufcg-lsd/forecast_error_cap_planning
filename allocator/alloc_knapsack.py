@@ -28,8 +28,7 @@ def knapsack(demand, prices, market_option, available_sp, res_duration):
     # each instance as a string, if there is more than one instance of the same type, 
     # it appears more than once in the list
     instance_types = []
-    for instance_type in demand:
-        quantity = demand[instance_type]
+    for instance_type, quantity in demand.items():
         for i in range(quantity):
             instance_types.append(instance_type)
     
