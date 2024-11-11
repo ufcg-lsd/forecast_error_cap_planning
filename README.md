@@ -59,9 +59,9 @@ The first one contains the number of instances in each market over time:
 |   3600    |  r_partial  |     10     |     0    | ... |     1     |
 |   3600    |    r_no     |      5     |     5    | ... |     0     |
 
-* Timestamp: current time on your allocation
-* Market: this column represents a specific market type at this timestamp
-* c4.2xlarge, c5.large, ..., md5.large: the number of instances allocated for some instance type at a timestamp
+* `Timestamp`: Current time on your allocation
+* `Market`: This column represents a specific market type at this timestamp
+* `c4.2xlarge`, `c5.large`, ..., `md5.large`: The number of instances allocated for some instance type at a timestamp
 
 The second one  contains the cost of each market over time:
 
