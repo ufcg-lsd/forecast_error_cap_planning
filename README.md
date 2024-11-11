@@ -71,13 +71,13 @@ The second one  contains the cost of each market over time:
 |    3600   |    0.0    | 0.0  |      0.0   |   500.04   | 0.0 |    500.04  |
 |    7200   |    0.0    | 0.0  |      0.0   |   500.04   | 0.0 |    500.04  |
 
-* Timestamp: current time on your allocation
-* OnDemand: On-demand cost at this timestamp
-* RAll: Reserve All Upfront costs at this timestamp
-* RPartialUp: Upfront cost of the Reserve Partial Upfront option at this timestamp
-* RPartialHr: Hourly cost of the Reserve Partial Upfront option at this timestamp
-* RNo: Reserve No Upfront costs at this timestamp
-* AllMarkets: The cost of all markets at this timestamp
+* `Timestamp`: current time on your allocation
+* `OnDemand`: On-demand cost at this timestamp
+* `RAll`: Reserve All Upfront costs at this timestamp
+* `RPartialUp`: Upfront cost of the Reserve Partial Upfront option at this timestamp
+* `RPartialHr`: Hourly cost of the Reserve Partial Upfront option at this timestamp
+* `RNo`: Reserve No Upfront costs at this timestamp
+* `AllMarkets`: The cost of all markets at this timestamp
 
 Note that, for the savings plans markets, this file contains the cost of savings plans bought, but not used.
 
