@@ -93,6 +93,18 @@ def write_allocation(instance_alloc, cost_alloc, output_path):
     cost_alloc_df.insert(0, 'timestamp', [t for t in range(final_t)])
     cost_alloc_df.to_csv(f'{output_path}/alloc_cost.csv', index=False)
 
+def initiate_instance_allocation(demand):
+    instance_allocation = {'OnDemand': {}, 'RAll': {}, 'RPartial': {}, 'RNo': {}}
+    for instance_type in demand:
+        instance_demand = demand[instance_type]
+        
+        instance_allocation['RAll'][instance_type] = [0 for _ in range(len(instance_demand))]
+        instance_allocation['RPartial'][instance_type] = [0 for _ in range(len(instance_demand))]
+        instance_allocation['RNo'][instance_type] = [0 for _ in range(len(instance_demand))]
+        instance_allocation['OnDemand'][instance_type] = [0 for _ in range(len(instance_demand))]
+
+    return instance_allocation
+
 class InstancePrices:
     def __init__(self, on_demand, up_all_upfront, up_partial_upfront, hr_partial_upfront, hr_no_upfront):
         self.on_demand = on_demand

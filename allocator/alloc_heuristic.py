@@ -1,3 +1,5 @@
+from allocator_aux import initiate_instance_allocation
+
 def alloc(demand, prices, available_sp, market_option, res_duration):
     instance_allocation = initiate_instance_allocation(demand)
     ordered_instance_types = sorted(prices, key=lambda x: prices[x].get_effective_hourly_rate(market_option, res_duration), reverse=True)
@@ -16,16 +18,4 @@ def alloc(demand, prices, available_sp, market_option, res_duration):
 
                 available_sp[t] = available_sp[t] - (num_sp_instances * hourly_price)
     
-    return instance_allocation
-
-def initiate_instance_allocation(demand):
-    instance_allocation = {'OnDemand': {}, 'RAll': {}, 'RPartial': {}, 'RNo': {}}
-    for instance_type in demand:
-        instance_demand = demand[instance_type]
-        
-        instance_allocation['RAll'][instance_type] = [0 for _ in range(len(instance_demand))]
-        instance_allocation['RPartial'][instance_type] = [0 for _ in range(len(instance_demand))]
-        instance_allocation['RNo'][instance_type] = [0 for _ in range(len(instance_demand))]
-        instance_allocation['OnDemand'][instance_type] = [0 for _ in range(len(instance_demand))]
-
     return instance_allocation

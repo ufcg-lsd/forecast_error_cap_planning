@@ -1,4 +1,5 @@
 from ortools.algorithms.python import knapsack_solver
+from allocator_aux import initiate_instance_allocation
 
 FLOAT_PRECISION = 10**5
 
@@ -51,15 +52,3 @@ def knapsack(demand, prices, market_option, available_sp, res_duration):
             packed_items.append(instance_types[i])
 
     return packed_items
-
-def initiate_instance_allocation(demand):
-    instance_allocation = {'OnDemand': {}, 'RAll': {}, 'RPartial': {}, 'RNo': {}}
-    for instance_type in demand:
-        instance_demand = demand[instance_type]
-        
-        instance_allocation['RAll'][instance_type] = [0 for _ in range(len(instance_demand))]
-        instance_allocation['RPartial'][instance_type] = [0 for _ in range(len(instance_demand))]
-        instance_allocation['RNo'][instance_type] = [0 for _ in range(len(instance_demand))]
-        instance_allocation['OnDemand'][instance_type] = [0 for _ in range(len(instance_demand))]
-
-    return instance_allocation
