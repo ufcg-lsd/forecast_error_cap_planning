@@ -4,7 +4,7 @@ import alloc_heuristic
 import alloc_knapsack
 
 @click.command()
-@click.argument('input_path', type=click.Path(exists=True))
+@click.argument('demand_path', type=click.Path(exists=True))
 @click.argument('prices_path', type=click.Path(exists=True))
 @click.argument('cost_allocation_path', type=click.Path(exists=True))
 @click.argument('output_dir', type=click.Path(exists=False))
