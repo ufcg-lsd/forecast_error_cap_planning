@@ -7,7 +7,15 @@ Contains the templates that the files should follow throughout this project. All
 
 ### Demand
 
-The demand contains the information about number of instances used of each instance type over time. The first column of the csv is 'timestamp', with integer as values. The other columns have the name of the instance type, such as 'c5.large' or 't3.micro'. The values of the instance types correpond to their demands over time and need to be integers.
+The demand data file records the number of instances used for each instance type at specific times. The first column, `timestamp`, contains UNIX timestamps in seconds, representing each time interval. Subsequent columns correspond to instance types, such as `c5.large`, `t3.micro`, and `m5.xlarge`, with integer values indicating the demand (number of instances) for each type at the given timestamp.
+
+| timestamp  | c5.large | ... | t3.micro | m5.xlarge |
+|------------|----------|-----|----------|-----------|
+| 1609459200 | 3        | ... | 5        | 2         |
+| 1609462800 | 2        | ... | 4        | 3         |
+| 1609466400 | 4        | ... | 2        | 1         |
+| 1609470000 | 3        | ... | 6        | 4         |
+| 1609473600 | 5        | ... | 7        | 2         |
 
 ### Prices
 
