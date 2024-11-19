@@ -1,5 +1,5 @@
 import click
-from allocator_aux import read_demand, read_prices, read_cost_allocation, write_allocation
+from .allocator_aux import read_demand, read_prices, read_cost_allocation, write_allocation
 import alloc_heuristic
 import alloc_knapsack
 
