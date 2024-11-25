@@ -1,6 +1,6 @@
 import click
-from .allocator_aux import read_demand, read_prices, read_cost_allocation, write_allocation
-from . import alloc_heuristic, alloc_knapsack
+from src.allocator.allocator_aux import read_demand, read_prices, read_cost_allocation, write_allocation
+from src.allocator import alloc_heuristic, alloc_knapsack
 
 @click.command()
 @click.argument('demand_path', type=click.Path(exists=True))

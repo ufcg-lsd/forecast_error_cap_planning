@@ -1,5 +1,5 @@
 from ortools.algorithms.python import knapsack_solver
-from .allocator_aux import initiate_instance_allocation
+from src.allocator.allocator_aux import initiate_instance_allocation
 
 FLOAT_PRECISION = 10**5
 

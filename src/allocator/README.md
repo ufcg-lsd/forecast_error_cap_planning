@@ -23,11 +23,11 @@ The optimal solution is modelled as the Knapsack Problem, in which the capacity 
 The tests for the allocator are in *test_allocator.py*. To run all tests:
 
 ```
-python3 -m unittest
+poetry run python3 -m unittest
 ```
 
 To run a single test:
 
 ```
-python3 -m unittest test_allocator.TestAllocator.{name of the test case}
+poetry run python3 -m unittest test_allocator.TestAllocator.{name of the test case}
 ```

@@ -1,4 +1,4 @@
-from .allocator_aux import initiate_instance_allocation
+from src.allocator.allocator_aux import initiate_instance_allocation
 
 def alloc(demand, prices, available_sp, market_option, res_duration):
     """ Allocates the demand in the on-demand and savings plans markets

@@ -1,6 +1,6 @@
 import unittest
-from allocator_main import allocate
-from allocator_aux import InstancePrices
+from src.allocator.allocator_main import allocate
+from src.allocator.allocator_aux import InstancePrices
 
 class TestAllocator(unittest.TestCase):
 
