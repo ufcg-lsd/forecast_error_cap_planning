@@ -1,0 +1,2 @@
+src/forecast_generation/example_output/*
+!src/forecast_generation/example_output/.gitkeep
