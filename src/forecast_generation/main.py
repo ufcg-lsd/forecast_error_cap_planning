@@ -20,11 +20,19 @@ def main(demand_path, error_configs_path, output_dir):
     generate_error_forecasts(demand, error_configs, output_dir)
 
 def generate_error_forecasts(demand, error_configs, output_dir):
+    """
+    Create the demands with errors and saves them as csv files, given a list of error configs. 
+    """
+
     for error_config in error_configs:
         new_demand = add_error(demand, error_config.bias_level, error_config.sd_level)
         new_demand.to_csv(f'{output_dir}/demand_{error_config.to_string()}.csv', index=False)
 
 def add_error(demand, bias_level, sd_level):
+    """
+    Adds error to a demand, given one level of bias and one level of deviation.
+    """
+
     new_demand = pd.DataFrame()
     for instance_type in demand:
         snormal = np.random.normal(loc=0, scale=1, size=len(demand[instance_type]))
@@ -36,6 +44,10 @@ def add_error(demand, bias_level, sd_level):
     return new_demand    
 
 def read_error_configs(error_configs_path):
+    """
+    Reads the csv file with the error configs as a list of objects of ErrorConfig.
+    """
+
     error_configs_df = pd.read_csv(error_configs_path)
     error_configs = []
 
