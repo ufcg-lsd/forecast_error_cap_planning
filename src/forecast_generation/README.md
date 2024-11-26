@@ -5,11 +5,11 @@ Given a demand, create variations to simulate forecasts of that demand, that con
 To run:
 
 ```
-python3 main.py {path_of_demand_file} {path_of_error_configs_file} {path_of_output_dir}
+poetry run python3 main.py {path_of_demand_file} {path_of_error_configs_file} {path_of_output_dir}
 ```
 
 An example:
 
 ```
-python3 main.py example_input/demand.csv example_input/error_configs.csv example_output
+poetry run python3 main.py example_input/demand.csv example_input/error_configs.csv example_output
 ```
