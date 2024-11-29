@@ -6,8 +6,9 @@ authors = ["caio-galvao <caio.r.galvao@gmail.com>"]
 readme = "README.md"
 packages = [
     { include = "src" },
-    { include = "src/allocator" }
-    { include = "src/forecast_generation" }
+    { include = "src/allocator" },
+    { include = "src/forecast_generation" },
+    { include = "src/experiment"}
 ]
 
 [tool.poetry.dependencies]

@@ -19,7 +19,7 @@ def read_demand(demand_path):
 
                 for i in range(0, len(line)):
                     instance_type = header[i].strip('\n').strip('"')
-                    demand[instance_type].append(int(line[i]))
+                    demand[instance_type].append(int(float(line[i])))
 
     timestamp = {'timestamp': demand['timestamp']}
     demand.pop('timestamp')
@@ -58,11 +58,11 @@ def read_cost_allocation(cost_allocation_path):
                     break
                 line = line.split(',')
 
-                cost_allocation['OnDemand'].append(line[1])
-                cost_allocation['RAll'].append(line[2])
-                cost_allocation['RPartialUp'].append(line[3])
-                cost_allocation['RPartialHr'].append(line[4])
-                cost_allocation['RNo'].append(line[5])
+                cost_allocation['OnDemand'].append(float(line[1]))
+                cost_allocation['RAll'].append(float(line[2]))
+                cost_allocation['RPartialUp'].append(float(line[3]))
+                cost_allocation['RPartialHr'].append(float(line[4]))
+                cost_allocation['RNo'].append(float(line[5]))
 
     return cost_allocation
 
@@ -70,7 +70,7 @@ def write_allocation(instance_alloc, cost_alloc, output_path):
     final_t = len(cost_alloc['OnDemand'])
 
     #instance allocation
-    instance_alloc_df = {'timestamp': [t for t in range(final_t)],
+    instance_alloc_df = {'timestamp': [t for t in range(final_t) for _ in range(4)],
                         'market': ['on_demand', 'r_all', 'r_partial', 'r_no'] * final_t,
                         }
 
@@ -86,10 +86,12 @@ def write_allocation(instance_alloc, cost_alloc, output_path):
             
             instance_alloc_df[instance_type] += [od, r_all, r_partial, r_no]
 
+    instance_alloc_df = pd.DataFrame(instance_alloc_df)
     instance_alloc_df.to_csv(f'{output_path}/alloc_instance.csv', index=False)
 
     #cost allocation
     cost_alloc_df = pd.DataFrame(cost_alloc)
+    cost_alloc_df['AllMarkets'] = cost_alloc_df['OnDemand'] + cost_alloc_df['RAll'] + cost_alloc_df['RPartialUp'] + cost_alloc_df['RPartialHr'] + cost_alloc_df['RNo']
     cost_alloc_df.insert(0, 'timestamp', [t for t in range(final_t)])
     cost_alloc_df.to_csv(f'{output_path}/alloc_cost.csv', index=False)
 
