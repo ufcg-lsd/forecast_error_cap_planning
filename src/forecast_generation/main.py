@@ -1,4 +1,5 @@
 import click
+import math
 import pandas as pd
 import numpy as np
 
@@ -38,6 +39,7 @@ def add_error(demand, bias_level, sd_level):
         snormal = np.random.normal(loc=0, scale=1, size=len(demand[instance_type]))
         new_demand[instance_type] = demand[instance_type] * (1 + bias_level + sd_level * snormal)
         
+        new_demand[instance_type] = new_demand[instance_type].apply(math.ceil)
         #new_demand[instance_type] = demand[instance_type] * (1 + (bias_level / 100) + sd_level * snormal)
         #new_demand[instance_type] = demand[instance_type] * (1 + (bias_level / 100)) * (1 + (sd_level * snormal))
 

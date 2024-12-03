@@ -3,7 +3,7 @@ import pandas as pd
 import os
 import subprocess
 
-class TestVtexAllocation(unittest.TestCase):
+class TestExperiment(unittest.TestCase):
 
     def setUp(self):
         os.mkdir('output_tests')
