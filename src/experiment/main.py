@@ -4,7 +4,6 @@ import pandas as pd
 from src.allocator.allocator_main import allocate, write_allocation, read_cost_allocation, read_demand, read_prices
 from src.forecast_generation.main import generate_error_forecasts, read_error_configs
 
-RES_DURATION = 8760
 MARKET_OPTION = 'RNo'
 ALLOC_METHOD = 2
 
@@ -13,8 +12,9 @@ ALLOC_METHOD = 2
 @click.argument('prices_path', type=click.Path(exists=True))
 @click.argument('error_configs_path', type=click.Path(exists=True))
 @click.argument('cost_allocation_path', type=click.Path(exists=True))
+@click.option('--reserve_duration', type=int, default=8760)
 @click.argument('output_dir', type=click.Path(exists=False))
-def main(demand_path, prices_path, error_configs_path, cost_allocation_path, output_dir):
+def main(demand_path, prices_path, error_configs_path, cost_allocation_path, reserve_duration, output_dir):
     
     forecasts_dir = f'{output_dir}/forecasts'
     os.mkdir(forecasts_dir)
@@ -39,7 +39,7 @@ def main(demand_path, prices_path, error_configs_path, cost_allocation_path, out
 
         forecast_dem, timestamp = read_demand(forecast_path)
         
-        instance_allocation, cost_allocation = allocate(forecast_dem, prices, cost_allocation, RES_DURATION, MARKET_OPTION, ALLOC_METHOD)
+        instance_allocation, cost_allocation = allocate(forecast_dem, prices, cost_allocation, reserve_duration, MARKET_OPTION, ALLOC_METHOD)
 
         write_allocation(instance_allocation, cost_allocation, alloc_dir)
 
