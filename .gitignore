@@ -3,3 +3,5 @@ src/experiment/__pycache__
 src/forecast_generation/__pycache__
 src/forecast_generation/example_output/*
 !src/forecast_generation/example_output/.gitkeep
+src/experiment/example_output/*
+!src/experiment/example_output/.gitkeep
