@@ -49,6 +49,7 @@ def experiment(demand_path, prices_path, error_configs_path, cost_allocation_pat
         summary_df.loc[len(summary_df)] = [config_name[1], config_name[3], sum(cost_allocation['OnDemand']), sum(cost_allocation[MARKET_OPTION]),
                                         (sum(cost_allocation['OnDemand']) + sum(cost_allocation[MARKET_OPTION]))]
 
+    summary_df = summary_df.sort_values(by='total_cost')
     summary_df.to_csv(f'{allocations_dir}/summary.csv', index=False)
 
 if __name__ == '__main__':
