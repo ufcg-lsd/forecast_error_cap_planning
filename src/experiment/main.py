@@ -15,7 +15,9 @@ ALLOC_METHOD = 2
 @click.option('--reserve_duration', type=int, default=8760)
 @click.argument('output_dir', type=click.Path(exists=False))
 def main(demand_path, prices_path, error_configs_path, cost_allocation_path, reserve_duration, output_dir):
-    
+    experiment(demand_path, prices_path, error_configs_path, cost_allocation_path, reserve_duration, output_dir)
+
+def experiment(demand_path, prices_path, error_configs_path, cost_allocation_path, reserve_duration, output_dir):
     forecasts_dir = f'{output_dir}/forecasts'
     os.mkdir(forecasts_dir)
 
