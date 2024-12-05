@@ -30,7 +30,7 @@ def experiment(demand_path, prices_path, error_configs_path, cost_allocation_pat
     generate_error_forecasts(pd.read_csv(demand_path), error_configs, forecasts_dir)
 
     prices = read_prices(prices_path)
-    cost_allocation = read_cost_allocation(cost_allocation_path)
+    cost_allocation_base = read_cost_allocation(cost_allocation_path)
 
     for filename in os.listdir(forecasts_dir):
         forecast_path = f'{forecasts_dir}/{filename}'
@@ -41,13 +41,15 @@ def experiment(demand_path, prices_path, error_configs_path, cost_allocation_pat
 
         forecast_dem, timestamp = read_demand(forecast_path)
         
-        instance_allocation, cost_allocation = allocate(forecast_dem, prices, cost_allocation, reserve_duration, MARKET_OPTION, ALLOC_METHOD)
+        instance_allocation, cost_allocation = allocate(forecast_dem, prices, cost_allocation_base, reserve_duration, MARKET_OPTION, ALLOC_METHOD)
 
         write_allocation(instance_allocation, cost_allocation, alloc_dir)
 
         config_name = config_name.split('_')
         summary_df.loc[len(summary_df)] = [config_name[1], config_name[3], sum(cost_allocation['OnDemand']), sum(cost_allocation[MARKET_OPTION]),
                                         (sum(cost_allocation['OnDemand']) + sum(cost_allocation[MARKET_OPTION]))]
+        
+        del instance_allocation, cost_allocation
 
     summary_df = summary_df.sort_values(by='total_cost')
     summary_df.to_csv(f'{allocations_dir}/summary.csv', index=False)
