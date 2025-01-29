@@ -1,0 +1,24 @@
+[tool.poetry]
+name = "forecast-error-cap-planning"
+version = "0.1.0"
+description = ""
+authors = ["caio-galvao <caio.r.galvao@gmail.com>"]
+readme = "README.md"
+packages = [
+    { include = "src" },
+    { include = "src/allocator" },
+    { include = "src/forecast_generation" },
+    { include = "src/experiment"}
+]
+
+[tool.poetry.dependencies]
+python = "^3.10"
+pandas = "^2.2.3"
+click = "^8.1.7"
+ortools = "^9.11.4210"
+numpy = "^2.1.3"
+
+
+[build-system]
+requires = ["poetry-core"]
+build-backend = "poetry.core.masonry.api"
