@@ -21,9 +21,9 @@ def main(demand_path, prices_path, cost_allocation_path, output_dir, res_duratio
     prices = read_prices(prices_path)
     cost_allocation = read_cost_allocation(cost_allocation_path)
 
-    instance_allocation, cost_allocation = allocate(demand, prices, cost_allocation, res_duration, market_option, alloc_method)
+    instance_allocation, new_cost_allocation = allocate(demand, prices, cost_allocation, res_duration, market_option, alloc_method)
     
-    write_allocation(instance_allocation, cost_allocation, output_dir)
+    write_allocation(instance_allocation, new_cost_allocation, output_dir)
 
 def allocate(demand, prices, cost_allocation, res_duration, market_option, alloc_method):
     """ Receiving the input data as objects, calls the allocation strategies
@@ -37,9 +37,9 @@ def allocate(demand, prices, cost_allocation, res_duration, market_option, alloc
         case 2:
             instance_allocation = alloc_knapsack.alloc(demand, prices, available_sp, market_option, res_duration)
 
-    cost_allocation = update_cost_alloc(cost_allocation, instance_allocation, prices)
+    new_cost_allocation = update_cost_alloc(cost_allocation, instance_allocation, prices)
     
-    return instance_allocation, cost_allocation
+    return instance_allocation, new_cost_allocation
 
 def get_available_savings_plans(cost_allocation, market_option, res_duration):
     """ Given a cost allocation, finds the available value for the savings plans market over time
