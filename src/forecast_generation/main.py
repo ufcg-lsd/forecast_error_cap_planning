@@ -35,8 +35,11 @@ def add_error(demand, bias_level, sd_level):
 
     new_demand = pd.DataFrame()
     for instance_type in demand:
-        snormal = np.random.normal(loc=0, scale=1, size=len(demand[instance_type]))
-        new_demand[instance_type] = demand[instance_type] * (1 + bias_level + sd_level * snormal)
+        if instance_type in ['timestamp', 'hour']:
+            new_demand[instance_type] = demand[instance_type]
+        else:
+            snormal = np.random.normal(loc=0, scale=1, size=len(demand[instance_type]))
+            new_demand[instance_type] = demand[instance_type] * (1 + bias_level + sd_level * snormal)
         
         #new_demand[instance_type] = demand[instance_type] * (1 + (bias_level / 100) + sd_level * snormal)
         #new_demand[instance_type] = demand[instance_type] * (1 + (bias_level / 100)) * (1 + (sd_level * snormal))
