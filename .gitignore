@@ -1,1 +1,3 @@
+src/forecast_generation/example_output/*
+!src/forecast_generation/example_output/.gitkeep
 src/allocator/__pycache__
