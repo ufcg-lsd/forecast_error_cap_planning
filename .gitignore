@@ -6,3 +6,6 @@ src/forecast_generation/example_output/*
 src/experiment/old/example_output/*
 !src/experiment/old/example_output/.gitkeep
 src/experiment/old/executions
+src/experiment/data/*
+!src/experiment/data/.gitkeep
+src/experiment/optimization
