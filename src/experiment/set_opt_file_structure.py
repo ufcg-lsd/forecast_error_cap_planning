@@ -10,7 +10,10 @@ def main():
     output_path = sys.argv[1]
     demand_dir = sys.argv[2]
     prices_path = sys.argv[3]
+
+    set_up_multiple_scenarios(demand_dir, prices_path, output_path)
     
+def set_up_multiple_scenarios(demand_dir, prices_path, output_path):
     prices = read_prices(prices_path)
 
     for demand_path in os.listdir(demand_dir):
