@@ -1,21 +1,6 @@
-import click
 from src.allocator.allocator_aux import read_demand, read_prices, read_cost_allocation, write_allocation
 from src.allocator import alloc_heuristic, alloc_knapsack
 
-@click.command()
-@click.argument('demand_path', type=click.Path(exists=True))
-@click.argument('prices_path', type=click.Path(exists=True))
-@click.argument('cost_allocation_path', type=click.Path(exists=True))
-@click.argument('output_dir', type=click.Path(exists=False))
-@click.option('--res_duration',
-              type=int,
-              default=8760)
-@click.option('--market_option',
-              type=str,
-              default='RNo')
-@click.option('--alloc_method',
-              type=int,
-              default=1)
 def main(demand_path, prices_path, cost_allocation_path, output_dir, res_duration, market_option, alloc_method):
     demand = read_demand(demand_path)
     prices = read_prices(prices_path)
@@ -86,6 +71,3 @@ def update_cost_alloc(cost_allocation, instance_allocation, prices):
             cost_allocation['OnDemand'][t] += demand * price
     
     return cost_allocation
-
-if __name__ == '__main__':
-    main()
