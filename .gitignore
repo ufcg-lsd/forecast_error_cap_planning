@@ -8,4 +8,5 @@ src/experiment/old/example_output/*
 src/experiment/old/executions
 src/experiment/data/*
 !src/experiment/data/.gitkeep
+src/experiment/output
 src/experiment/optimization
