@@ -8,10 +8,9 @@ MARKET_OPTION = 'RNo'
 ALLOC_METHOD = 1
 
 @click.command()
-@click.argument('demand_path', type=click.Path(exists=True))
 @click.argument('prices_path', type=click.Path(exists=True))
 @click.argument('output_dir', type=click.Path(exists=False))
-def main(demand_path, prices_path, output_dir):
+def main(prices_path, output_dir):
     alloc_results_path = f'{output_dir}/allocations'
     if not os.path.exists(alloc_results_path):
         os.mkdir(alloc_results_path)
@@ -29,6 +28,7 @@ def main(demand_path, prices_path, output_dir):
             os.mkdir(family_alloc_results_path)
             
             total_purchases_sp = pd.read_csv(f'{scenario_path}/{family}/output/total_purchases_savings_plan.csv')
+            demand_path = f'{scenario_path}/{family}/total_demand.csv'
             
             num_rows = len(total_purchases_sp)
             cost_alloc_sp = pd.DataFrame({
