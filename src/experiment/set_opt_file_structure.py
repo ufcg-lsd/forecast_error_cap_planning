@@ -26,6 +26,7 @@ def set_up_scenario(prices, demand_path, scenario_path):
     os.mkdir(scenario_path)
     demand, timestamp = read_demand(demand_path)
     families = get_families(demand)
+    families = select_types(families, prices)
 
     for family in families:
         instance_types = families[family]
@@ -68,6 +69,19 @@ def get_families(demand):
         else:
             families[family] = [instance_type]
     return families
+
+def select_types(families, prices):
+    new_families = {}
+    for family in families:
+        instance_types = families[family]
+        for instance_type in instance_types:
+            if instance_type in prices.keys():
+                if family in new_families: 
+                    new_families[family].append(instance_type)
+                else:
+                    new_families[family] = [instance_type]
+    
+    return new_families
 
 def get_effective_hourly_rate(instance_price, market, res_duration):
     match market:
