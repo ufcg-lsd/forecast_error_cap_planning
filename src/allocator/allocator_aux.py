@@ -21,10 +21,10 @@ def read_demand(demand_path):
                     instance_type = header[i].strip('\n').strip('"')
                     demand[instance_type].append(int(float(line[i])))
 
-    timestamp = {'timestamp': demand['timestamp']}
-    demand.pop('timestamp')
+    hour = {'hour': demand['hour']}
+    demand.pop('hour')
 
-    return demand, timestamp
+    return demand, hour
 
 def read_prices(prices_path):
     prices = {}

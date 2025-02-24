@@ -2,7 +2,7 @@ from src.allocator.allocator_aux import read_demand, read_prices, read_cost_allo
 from src.allocator import alloc_heuristic, alloc_knapsack
 
 def main(demand_path, prices_path, cost_allocation_path, output_dir, res_duration, market_option, alloc_method):
-    demand = read_demand(demand_path)
+    demand, hour = read_demand(demand_path)
     prices = read_prices(prices_path)
     cost_allocation = read_cost_allocation(cost_allocation_path)
 
