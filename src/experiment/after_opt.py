@@ -10,12 +10,17 @@ ALLOC_METHOD = 1
 @click.command()
 @click.argument('prices_path', type=click.Path(exists=True))
 @click.argument('output_dir', type=click.Path(exists=False))
-def main(prices_path, output_dir):
+@click.option('--base_scenario',
+              type=str,
+              default='bias_0.0_sd_0.0')
+def main(prices_path, output_dir, base_scenario):
     alloc_results_path = f'{output_dir}/allocations'
     if not os.path.exists(alloc_results_path):
         os.mkdir(alloc_results_path)
 
     opt_results_path = f'{output_dir}/optimizations'
+
+    demand_path = base_scenario
 
     for scenario in os.listdir(opt_results_path):
         scenario_path = f'{opt_results_path}/{scenario}'
@@ -28,7 +33,9 @@ def main(prices_path, output_dir):
             os.mkdir(family_alloc_results_path)
             
             total_purchases_sp = pd.read_csv(f'{scenario_path}/{family}/output/total_purchases_savings_plan.csv')
-            demand_path = f'{scenario_path}/{family}/total_demand.csv'
+            
+            #the demand comes from the base scenario (the one that was not predicted)
+            demand_path = f'{base_scenario}/{family}/total_demand.csv'
             
             num_rows = len(total_purchases_sp)
             cost_alloc_sp = pd.DataFrame({
