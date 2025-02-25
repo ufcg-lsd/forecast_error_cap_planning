@@ -20,8 +20,6 @@ def main(prices_path, output_dir, base_scenario):
 
     opt_results_path = f'{output_dir}/optimizations'
 
-    demand_path = base_scenario
-
     for scenario in os.listdir(opt_results_path):
         scenario_path = f'{opt_results_path}/{scenario}'
 
@@ -35,7 +33,7 @@ def main(prices_path, output_dir, base_scenario):
             total_purchases_sp = pd.read_csv(f'{scenario_path}/{family}/output/total_purchases_savings_plan.csv')
             
             #the demand comes from the base scenario (the one that was not predicted)
-            demand_path = f'{base_scenario}/{family}/total_demand.csv'
+            demand_path = f'{opt_results_path}/{base_scenario}/{family}/total_demand.csv'
             
             num_rows = len(total_purchases_sp)
             cost_alloc_sp = pd.DataFrame({
