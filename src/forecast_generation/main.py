@@ -27,7 +27,7 @@ def generate_error_forecasts(demand, error_configs, error_option, output_dir):
     Create the demands with errors and saves them as csv files, given a list of error configs. 
     """
 
-    size = len(next(iter(demand.values())))
+    size = len(demand[demand.keys()[0]])
     snormal = get_snormal(size)
 
     for error_config in error_configs:
