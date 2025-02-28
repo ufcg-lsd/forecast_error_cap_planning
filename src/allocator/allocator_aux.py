@@ -21,7 +21,10 @@ def read_demand(demand_path):
                     instance_type = header[i].strip('\n').strip('"')
                     demand[instance_type].append(int(float(line[i])))
 
-    hour = {'hour': demand['hour']}
+    if 'timestamp' in demand:
+        hour = {'timestamp': demand['timestamp']}
+    else:        
+        hour = {'hour': demand['hour']}
     demand.pop('hour')
 
     return demand, hour
