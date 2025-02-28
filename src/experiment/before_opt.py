@@ -8,8 +8,11 @@ from src.experiment.set_opt_file_structure import set_up_multiple_scenarios
 @click.argument('demand_path', type=click.Path(exists=True))
 @click.argument('prices_path', type=click.Path(exists=True))
 @click.argument('error_configs_path', type=click.Path(exists=True))
+@click.option('--error_option',
+              type=int,
+              default=1)
 @click.argument('output_dir', type=click.Path(exists=False))
-def main(demand_path, prices_path, error_configs_path, output_dir):
+def main(demand_path, prices_path, error_configs_path, error_option, output_dir):
 
     forecasts_dir = f'{output_dir}/forecasts'
     if not os.path.exists(forecasts_dir):
@@ -17,7 +20,7 @@ def main(demand_path, prices_path, error_configs_path, output_dir):
 
     demand = pd.read_csv(demand_path)
     error_configs = read_error_configs(error_configs_path)
-    generate_error_forecasts(demand, error_configs, forecasts_dir)
+    generate_error_forecasts(demand, error_configs, error_option, forecasts_dir)
 
     optimizations_dir = f'{output_dir}/optimizations'
     if not os.path.exists(optimizations_dir):
