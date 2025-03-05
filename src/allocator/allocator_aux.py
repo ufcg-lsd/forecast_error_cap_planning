@@ -23,9 +23,10 @@ def read_demand(demand_path):
 
     if 'timestamp' in demand:
         hour = {'timestamp': demand['timestamp']}
+        demand.pop('timestamp')
     else:        
         hour = {'hour': demand['hour']}
-    demand.pop('hour')
+        demand.pop('hour')
 
     return demand, hour
 
