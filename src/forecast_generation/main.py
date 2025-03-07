@@ -1,3 +1,12 @@
+""" Creates simulated forecasts with error given a demand.
+
+Receives the real future demand and a set of error configurations.
+Those error configurations consist of a bias level and a standard
+deviation level. For each configuration, creates a variation of the
+real demand by adding the two error variables. Writes each forecasted
+demand as csv file.
+"""
+
 import click
 import pandas as pd
 import numpy as np
