@@ -1,3 +1,6 @@
+""" Auxiliary methods for the allocator.
+"""
+
 import pandas as pd
 
 def read_demand(demand_path):
