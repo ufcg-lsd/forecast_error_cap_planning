@@ -1,3 +1,6 @@
+""" CLI interface for allocator_main.py.
+"""
+
 import click
 from src.allocator import allocator_main
 
