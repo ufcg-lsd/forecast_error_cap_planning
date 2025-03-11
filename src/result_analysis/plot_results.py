@@ -6,17 +6,14 @@ def main():
     results_path = sys.argv[1]
     results = pd.read_csv(results_path)
 
-    results_sd_0 = results[results['sd_level'] == 0]
-    results_sd_005 = results[results['sd_level'] == 0.05]
-    results_sd_01 = results[results['sd_level'] == 0.1]
+    sd_levels = sorted(list(set(results['sd_level'])))
+    colors = ['gold', 'orange', 'orangered']
 
-    results_sd_0 = results_sd_0.sort_values(by=['bias_level'])
-    results_sd_005 = results_sd_005.sort_values(by=['bias_level'])
-    results_sd_01 = results_sd_01.sort_values(by=['bias_level'])
-
-    plt.plot(results_sd_0['bias_level'], results_sd_0['relative_cost'], marker='o', linestyle='-', label=f'sd_level={0}', color='gold')
-    plt.plot(results_sd_005['bias_level'], results_sd_005['relative_cost'], marker='o', linestyle='-', label=f'sd_level={0.05}', color='orange')
-    plt.plot(results_sd_01['bias_level'], results_sd_01['relative_cost'], marker='o', linestyle='-', label=f'sd_level={0.1}', color='orangered')
+    for i in range(len(sd_levels)):
+        sd_level = sd_levels[i]
+        results_sd_level = results[results['sd_level'] == sd_level]
+        results_sd_level = results_sd_level.sort_values(by=['bias_level'])
+        plt.plot(results_sd_level['bias_level'], results_sd_level['relative_cost'], marker='o', linestyle='-', label=f'sd_level={sd_level}', color=colors[i])
 
     plt.xlabel('Bias Level')
     plt.ylabel('Relative Cost')
