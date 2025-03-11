@@ -236,7 +236,6 @@ class TestForecast(unittest.TestCase):
     @parameterized.expand([1, 2, 3, 4])
     @patch('src.forecast_generation.forecast_main.get_snormal', return_value=np.array([1.5, 0.5, 0, -1, -0.5, 1, 0.5, -2])) 
     def test_variable_distribution_sd(self, error_option, mock_get_snormal):
-        error_option = 1
         demand = {'timestamp': [0, 1, 2, 3, 4, 5, 6, 7],
                   'a.large': [10, 10, 10, 10, 10, 10, 10, 10],
                   'a.medium': [10, 8, 3, 5, 11, 20, 15, 19]}
@@ -259,3 +258,152 @@ class TestForecast(unittest.TestCase):
         self.assertEqual(result['a.medium'].tolist(), [12, 8, 3, 4, 10, 22, 16, 15])
 
     ################### Bias and Sd ###################
+
+
+    ############### Options 1 and 3 ###############
+
+    @parameterized.expand([1, 3])
+    @patch('src.forecast_generation.forecast_main.get_snormal', return_value=np.array([1, 1, 1, 1, 1, 1, 1, 1])) 
+    def test_one_config_sd_bias_positive(self, error_option, mock_get_snormal):
+        demand = {'timestamp': [0, 1, 2, 3, 4, 5, 6, 7],
+                  'a.large': [10, 10, 10, 10, 10, 10, 10, 10],
+                  'a.medium': [10, 8, 3, 5, 11, 20, 15, 19]}
+
+        demand_df = pd.DataFrame(demand)
+        demand_df.to_csv('demand.csv', index=False)
+
+        error_configs = {'bias_level': [0.05],
+                  'sd_level': [0.05]}
+        
+        error_configs_df = pd.DataFrame(error_configs)
+        error_configs_df.to_csv('error_configs.csv', index=False)
+
+        forecast_main.main('demand.csv', 'error_configs.csv', error_option, 'output_tests')
+
+        result = pd.read_csv('output_tests/demand_bias_0.05_sd_0.05.csv')
+
+        mock_get_snormal.assert_called_with(8)
+        self.assertEqual(result['a.large'].tolist(), [11, 11, 11, 11, 11, 11, 11, 11])
+        self.assertEqual(result['a.medium'].tolist(), [11, 9, 3, 6, 12, 22, 16, 21])
+    
+    @parameterized.expand([1, 3])
+    @patch('src.forecast_generation.forecast_main.get_snormal', return_value=np.array([1, 1, 1, 1, 1, 1, 1, 1])) 
+    def test_one_config_sd_bias_negative(self, error_option, mock_get_snormal):
+        demand = {'timestamp': [0, 1, 2, 3, 4, 5, 6, 7],
+                  'a.large': [10, 10, 10, 10, 10, 10, 10, 10],
+                  'a.medium': [10, 8, 3, 5, 11, 20, 15, 19]}
+
+        demand_df = pd.DataFrame(demand)
+        demand_df.to_csv('demand.csv', index=False)
+
+        error_configs = {'bias_level': [-0.1],
+                  'sd_level': [0.2]}
+        
+        error_configs_df = pd.DataFrame(error_configs)
+        error_configs_df.to_csv('error_configs.csv', index=False)
+
+        forecast_main.main('demand.csv', 'error_configs.csv', error_option, 'output_tests')
+
+        result = pd.read_csv('output_tests/demand_bias_-0.1_sd_0.2.csv')
+
+        mock_get_snormal.assert_called_with(8)
+        self.assertEqual(result['a.large'].tolist(), [11, 11, 11, 11, 11, 11, 11, 11])
+        self.assertEqual(result['a.medium'].tolist(), [11, 9, 3, 6, 12, 22, 16, 21])
+
+    @parameterized.expand([1, 3])
+    @patch('src.forecast_generation.forecast_main.get_snormal', return_value=np.array([1.5, 0.5, 0, -1, -0.5, 1, 0.5, -2])) 
+    def test_variable_distribution_sd_bias(self, error_option, mock_get_snormal):
+        demand = {'timestamp': [0, 1, 2, 3, 4, 5, 6, 7],
+                  'a.large': [10, 10, 10, 10, 10, 10, 10, 10],
+                  'a.medium': [10, 8, 3, 5, 11, 20, 15, 19]}
+
+        demand_df = pd.DataFrame(demand)
+        demand_df.to_csv('demand.csv', index=False)
+
+        error_configs = {'bias_level': [0.1],
+                  'sd_level': [0.1]}
+        
+        error_configs_df = pd.DataFrame(error_configs)
+        error_configs_df.to_csv('error_configs.csv', index=False)
+
+        forecast_main.main('demand.csv', 'error_configs.csv', error_option, 'output_tests')
+
+        result = pd.read_csv('output_tests/demand_bias_0.1_sd_0.1.csv')
+
+        mock_get_snormal.assert_called_with(8)
+        self.assertEqual(result['a.large'].tolist(), [12, 12, 11, 10, 10, 12, 12, 9])
+        self.assertEqual(result['a.medium'].tolist(), [12, 9, 3, 5, 12, 24, 17, 17])
+
+    ############### Options 2 and 4  ###############
+
+    @parameterized.expand([2, 4])
+    @patch('src.forecast_generation.forecast_main.get_snormal', return_value=np.array([1, 1, 1, 1, 1, 1, 1, 1])) 
+    def test_one_config_sd_bias_positive(self, error_option, mock_get_snormal):
+        demand = {'timestamp': [0, 1, 2, 3, 4, 5, 6, 7],
+                  'a.large': [10, 10, 10, 10, 10, 10, 10, 10],
+                  'a.medium': [10, 8, 3, 5, 11, 20, 15, 19]}
+
+        demand_df = pd.DataFrame(demand)
+        demand_df.to_csv('demand.csv', index=False)
+
+        error_configs = {'bias_level': [0.05],
+                  'sd_level': [0.05]}
+        
+        error_configs_df = pd.DataFrame(error_configs)
+        error_configs_df.to_csv('error_configs.csv', index=False)
+
+        forecast_main.main('demand.csv', 'error_configs.csv', error_option, 'output_tests')
+
+        result = pd.read_csv('output_tests/demand_bias_0.05_sd_0.05.csv')
+
+        mock_get_snormal.assert_called_with(8)
+        self.assertEqual(result['a.large'].tolist(), [11, 11, 11, 11, 11, 11, 11, 11])
+        self.assertEqual(result['a.medium'].tolist(), [11, 9, 3, 6, 12, 22, 17, 21])
+    
+    @parameterized.expand([2, 4])
+    @patch('src.forecast_generation.forecast_main.get_snormal', return_value=np.array([1, 1, 1, 1, 1, 1, 1, 1])) 
+    def test_one_config_sd_bias_negative(self, error_option, mock_get_snormal):
+        demand = {'timestamp': [0, 1, 2, 3, 4, 5, 6, 7],
+                  'a.large': [10, 10, 10, 10, 10, 10, 10, 10],
+                  'a.medium': [10, 8, 3, 5, 11, 20, 15, 19]}
+
+        demand_df = pd.DataFrame(demand)
+        demand_df.to_csv('demand.csv', index=False)
+
+        error_configs = {'bias_level': [-0.1],
+                  'sd_level': [0.2]}
+        
+        error_configs_df = pd.DataFrame(error_configs)
+        error_configs_df.to_csv('error_configs.csv', index=False)
+
+        forecast_main.main('demand.csv', 'error_configs.csv', error_option, 'output_tests')
+
+        result = pd.read_csv('output_tests/demand_bias_-0.1_sd_0.2.csv')
+
+        mock_get_snormal.assert_called_with(8)
+        self.assertEqual(result['a.large'].tolist(), [11, 11, 11, 11, 11, 11, 11, 11])
+        self.assertEqual(result['a.medium'].tolist(), [11, 9, 3, 5, 12, 22, 16, 21])
+
+    @parameterized.expand([2, 4])
+    @patch('src.forecast_generation.forecast_main.get_snormal', return_value=np.array([1.5, 0.5, 0, -1, -0.5, 1, 0.5, -2])) 
+    def test_variable_distribution_sd_bias(self, error_option, mock_get_snormal):
+        demand = {'timestamp': [0, 1, 2, 3, 4, 5, 6, 7],
+                  'a.large': [10, 10, 10, 10, 10, 10, 10, 10],
+                  'a.medium': [10, 8, 3, 5, 11, 20, 15, 19]}
+
+        demand_df = pd.DataFrame(demand)
+        demand_df.to_csv('demand.csv', index=False)
+
+        error_configs = {'bias_level': [0.1],
+                  'sd_level': [0.1]}
+        
+        error_configs_df = pd.DataFrame(error_configs)
+        error_configs_df.to_csv('error_configs.csv', index=False)
+
+        forecast_main.main('demand.csv', 'error_configs.csv', error_option, 'output_tests')
+
+        result = pd.read_csv('output_tests/demand_bias_0.1_sd_0.1.csv')
+
+        mock_get_snormal.assert_called_with(8)
+        self.assertEqual(result['a.large'].tolist(), [13, 12, 11, 10, 10, 12, 12, 9])
+        self.assertEqual(result['a.medium'].tolist(), [13, 9, 3, 5, 11, 24, 17, 17])
