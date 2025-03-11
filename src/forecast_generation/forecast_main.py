@@ -7,7 +7,6 @@ real demand by adding the two error variables. Writes each forecasted
 demand as csv file.
 """
 
-import click
 import pandas as pd
 import numpy as np
 
@@ -19,13 +18,6 @@ class ErrorConfig:
     def to_string(self):
         return f'bias_{self.bias_level}_sd_{self.sd_level}'
 
-@click.command()
-@click.argument('demand_path', type=click.Path(exists=True))
-@click.argument('error_configs_path', type=click.Path(exists=True))
-@click.option('--error_option',
-              type=int,
-              default=1)
-@click.argument('output_dir', type=click.Path(exists=False))
 def main(demand_path, error_configs_path, error_option, output_dir):
     demand = pd.read_csv(demand_path)
     error_configs = read_error_configs(error_configs_path)
@@ -83,6 +75,3 @@ def read_error_configs(error_configs_path):
         error_configs.append(error_config)
 
     return error_configs
-
-if __name__ == '__main__':
-    main()
