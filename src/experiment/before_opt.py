@@ -1,7 +1,6 @@
 import click
-import pandas as pd
 import os
-from src.forecast_generation.main import read_error_configs, generate_error_forecasts
+from src.forecast_generation import forecast_main
 from src.experiment.set_opt_file_structure import set_up_multiple_scenarios
 
 @click.command()
@@ -18,9 +17,7 @@ def main(demand_path, prices_path, error_configs_path, error_option, output_dir)
     if not os.path.exists(forecasts_dir):
         os.mkdir(forecasts_dir)
 
-    demand = pd.read_csv(demand_path)
-    error_configs = read_error_configs(error_configs_path)
-    generate_error_forecasts(demand, error_configs, error_option, forecasts_dir)
+    forecast_main.main(demand_path, error_configs_path, error_option, forecasts_dir)
 
     optimizations_dir = f'{output_dir}/optimizations'
     if not os.path.exists(optimizations_dir):
