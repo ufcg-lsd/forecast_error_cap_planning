@@ -36,3 +36,16 @@ Combining the two options for the random normal distribution and the two options
 - 2: individual normal distribution generation and second formula;
 - 3: global normal distribution generation and first formula;
 - 4: global normal distribution generation and second formula.
+
+## Tests
+
+The tests for the forecast generation are in *test_forecast.py*. To run all tests:
+
+```
+poetry run python3 -m unittest
+```
+
+To run a single test:
+
+```
+poetry run python3 -m unittest test_forecast.TestForecast.{name of the test case}
