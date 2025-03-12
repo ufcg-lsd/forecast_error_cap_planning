@@ -2,6 +2,7 @@ import click
 import os
 import pandas as pd
 from src.allocator import allocator_main
+from src.experiment.aux.group_results import group_results
 
 RES_DURATION = 8760
 MARKET_OPTION = 'RNo'
@@ -49,6 +50,8 @@ def main(prices_path, output_dir, base_scenario):
             cost_allocation_path = f'{family_alloc_results_path}/purchases_sp.csv'
             cost_alloc_sp.to_csv(cost_allocation_path, index=False)
             allocator_main.main(demand_path, prices_path, cost_allocation_path, family_alloc_results_path, RES_DURATION, MARKET_OPTION, ALLOC_METHOD)
+
+    group_results(alloc_results_path, base_scenario, f'{output_dir}/results.csvs')
  
 if __name__ == '__main__':
     main()

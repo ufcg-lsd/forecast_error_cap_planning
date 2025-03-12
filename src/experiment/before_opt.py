@@ -1,7 +1,7 @@
 import click
 import os
 from src.forecast_generation import forecast_main
-from src.experiment.set_opt_file_structure import set_up_multiple_scenarios
+from src.experiment.aux.set_opt_file_structure import set_up_multiple_scenarios
 
 @click.command()
 @click.argument('demand_path', type=click.Path(exists=True))
