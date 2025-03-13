@@ -1,3 +1,11 @@
+""" Allocates the demand into cloud markets.
+
+Given a demand and a set purchases of savings plans,
+allocates the demand in the savings plans purchased
+and in the on-demand markets. Returns a cost allocation
+table (described in the project's README).
+"""
+
 from src.allocator.allocator_aux import read_demand, read_prices, read_cost_allocation, write_allocation
 from src.allocator import alloc_heuristic, alloc_knapsack
 

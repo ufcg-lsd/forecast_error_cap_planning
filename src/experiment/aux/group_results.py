@@ -9,7 +9,9 @@ import pandas as pd
               default='bias_0.0_sd_0.0')
 @click.argument('results_path', type=click.Path(exists=False))
 def main(allocations_dir, base_scenario, results_path):
+    group_results(allocations_dir, base_scenario, results_path)
 
+def group_results(allocations_dir, base_scenario, results_path):
     base_scenario_path = f'{allocations_dir}/{base_scenario}'
     base_scenario_cost = get_scenario_cost(base_scenario_path)
 
@@ -30,7 +32,7 @@ def main(allocations_dir, base_scenario, results_path):
         results['relative_cost'].append(scenario_cost/base_scenario_cost)
     
     results_df = pd.DataFrame(results)
-    results_df.sort_values(by=['bias_level', 'sd_level'])
+    results_df.sort_values(by=['sd_level', 'bias_level'])
     results_df.to_csv(results_path, index=False)
         
 def get_scenario_cost(scenario_path):
