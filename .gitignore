@@ -11,3 +11,5 @@ src/experiment/data/*
 !src/experiment/data/.gitkeep
 src/experiment/output
 src/experiment/optimization
+src/result_analysis/output/*
+!src/result_analysis/output/.gitkeep
