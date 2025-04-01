@@ -14,30 +14,34 @@ import os
 @click.command()
 @click.argument('results_dir', type=click.Path(exists=True))
 @click.argument('output_dir', type=click.Path(exists=False))
+@click.option('--res_duration',
+              type=int,
+              default=8760)
 @click.option('--base_scenario',
               type=str,
               default='bias_0.0_sd_0.0')
-def main(results_dir, output_dir, base_scenario):
-    costs_df = get_costs(results_dir, base_scenario)
+def main(results_dir, output_dir, res_duration, base_scenario):
+    costs_df = get_costs(results_dir, res_duration, base_scenario)
     costs_df.to_csv(os.path.join(output_dir, 'costs.csv'), index=False)
 
-    plot_by_family(costs_df, output_dir)
+    #plot_by_family(costs_df, output_dir)
     plot_by_scenario(costs_df, output_dir)
 
-def get_costs(results_dir, base_scenario):
+def get_costs(results_dir, res_duration, base_scenario):
+    """ Creates a dataframe with the costs by family and scenario
+    """
+
     costs_df = pd.DataFrame(columns=['scenario', 'family', 'od_cost', 'sp_cost', 'total_cost', 'relative_cost'])
 
     allocations_path = os.path.join(results_dir, 'allocations')
 
     base_scenario_path = os.path.join(allocations_path, base_scenario)
     for family in os.listdir(base_scenario_path):
-        family_path = os.path.join(base_scenario_path, family)
-        alloc_cost_path = os.path.join(family_path, 'alloc_cost.csv')
-        alloc_cost = pd.read_csv(alloc_cost_path)
+        alloc_cost, total_purchases_sp = read_alloc_files(family, scenario_path)
         
         od_cost = sum(alloc_cost['OnDemand'])
-        sp_cost = sum(alloc_cost['RNo'])
-        total_cost = sum(alloc_cost['AllMarkets'])
+        sp_cost = sum(total_purchases_sp['value_reserves']) * res_duration
+        total_cost = od_cost + sp_cost
 
         costs_df.loc[len(costs_df)] = [base_scenario, family, od_cost, sp_cost, total_cost, 1]
 
@@ -45,13 +49,11 @@ def get_costs(results_dir, base_scenario):
         if scenario != base_scenario:
             scenario_path = os.path.join(allocations_path, scenario)
             for family in os.listdir(scenario_path):
-                family_path = os.path.join(scenario_path, family)
-                alloc_cost_path = os.path.join(family_path, 'alloc_cost.csv')
-                alloc_cost = pd.read_csv(alloc_cost_path)
+                alloc_cost, total_purchases_sp = read_alloc_files(family, scenario_path)
                 
                 od_cost = sum(alloc_cost['OnDemand'])
-                sp_cost = sum(alloc_cost['RNo'])
-                total_cost = sum(alloc_cost['AllMarkets'])
+                sp_cost = sum(total_purchases_sp['value_reserves']) * res_duration
+                total_cost = od_cost + sp_cost
         
                 base_cost = costs_df.loc[
                     (costs_df['scenario'] == base_scenario) & (costs_df['family'] == family), 
@@ -67,6 +69,18 @@ def get_costs(results_dir, base_scenario):
                 costs_df.loc[len(costs_df)] = [scenario, family, od_cost, sp_cost, total_cost, relative_cost]
     
     return costs_df
+
+def read_alloc_files(family, scenario_path):
+    """ Reads alloc_cost and total_purchases for a family and scenario
+    """
+    
+    family_path = os.path.join(scenario_path, family)
+    alloc_cost_path = os.path.join(family_path, 'alloc_cost.csv')
+    alloc_cost = pd.read_csv(alloc_cost_path)
+    total_purchases_sp_path = os.path.join(family_path, 'total_purchases_sp.csv')
+    total_purchases_sp = pd.read_csv(total_purchases_sp_path)
+
+    return alloc_cost, total_purchases_sp
     
 #def plot_by_family(costs_df, output_dir):
 
