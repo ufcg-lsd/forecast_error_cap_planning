@@ -4,17 +4,19 @@ import pandas as pd
 from src.allocator import allocator_main
 from src.experiment.aux.group_results import group_results
 
-RES_DURATION = 8760
 MARKET_OPTION = 'RNo'
 ALLOC_METHOD = 1
 
 @click.command()
 @click.argument('prices_path', type=click.Path(exists=True))
 @click.argument('output_dir', type=click.Path(exists=False))
+@click.option('--res_duration',
+              type=int,
+              default=8760)
 @click.option('--base_scenario',
               type=str,
               default='bias_0.0_sd_0.0')
-def main(prices_path, output_dir, base_scenario):
+def main(prices_path, output_dir, res_duration, base_scenario):
     alloc_results_path = f'{output_dir}/allocations'
     if not os.path.exists(alloc_results_path):
         os.mkdir(alloc_results_path)
@@ -47,11 +49,14 @@ def main(prices_path, output_dir, base_scenario):
                 "AllMarkets": total_purchases_sp['value_active'].tolist()
             })
 
-            cost_allocation_path = f'{family_alloc_results_path}/purchases_sp.csv'
+            cost_allocation_path = f'{family_alloc_results_path}/alloc_cost_only_sp.csv'
             cost_alloc_sp.to_csv(cost_allocation_path, index=False)
-            allocator_main.main(demand_path, prices_path, cost_allocation_path, family_alloc_results_path, RES_DURATION, MARKET_OPTION, ALLOC_METHOD)
+            total_purchases_sp_path = f'{family_alloc_results_path}/total_purchases_sp.csv'
+            total_purchases_sp.to_csv(total_purchases_sp_path, index=False)
 
-    group_results(alloc_results_path, base_scenario, f'{output_dir}/results.csv')
+            allocator_main.main(demand_path, prices_path, cost_allocation_path, family_alloc_results_path, res_duration, MARKET_OPTION, ALLOC_METHOD)
+
+    group_results(alloc_results_path, base_scenario, res_duration, f'{output_dir}/results.csv')
  
 if __name__ == '__main__':
     main()

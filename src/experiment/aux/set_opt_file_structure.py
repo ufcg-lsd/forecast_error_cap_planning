@@ -3,26 +3,26 @@ import sys
 import pandas as pd
 from src.allocator.allocator_aux import read_prices, read_demand
 
-RES_DURATION = 8760
 MARKET_OPTION = 'RNo'
 
 def main():
     output_path = sys.argv[1]
     demand_dir = sys.argv[2]
     prices_path = sys.argv[3]
+    res_duration = int(sys.argv[4])
 
-    set_up_multiple_scenarios(demand_dir, prices_path, output_path)
+    set_up_multiple_scenarios(demand_dir, prices_path, res_duration, output_path)
     
-def set_up_multiple_scenarios(demand_dir, prices_path, output_path):
+def set_up_multiple_scenarios(demand_dir, prices_path, res_duration, output_path):
     prices = read_prices(prices_path)
 
     for demand_path in os.listdir(demand_dir):
         if demand_path[-4:] == '.csv':
             scenario_name = demand_path[7:-4]
             scenario_path = f'{output_path}/{scenario_name}'
-            set_up_scenario(prices, f'{demand_dir}/{demand_path}', scenario_path)
+            set_up_scenario(prices, f'{demand_dir}/{demand_path}', res_duration, scenario_path)
 
-def set_up_scenario(prices, demand_path, scenario_path):
+def set_up_scenario(prices, demand_path, res_duration, scenario_path):
     os.mkdir(scenario_path)
     demand, timestamp = read_demand(demand_path)
     families = get_families(demand)
@@ -42,8 +42,8 @@ def set_up_scenario(prices, demand_path, scenario_path):
             od_config['hourly_price'].append(prices[instance_type].on_demand)
 
             sp_config['instance'].append(instance_type)
-            sp_config['hourly_price'].append(get_effective_hourly_rate(prices[instance_type], MARKET_OPTION, RES_DURATION))
-            sp_config['duration'].append(RES_DURATION)
+            sp_config['hourly_price'].append(get_effective_hourly_rate(prices[instance_type], MARKET_OPTION, res_duration))
+            sp_config['duration'].append(res_duration)
         
         
         od_config_df = pd.DataFrame(od_config)

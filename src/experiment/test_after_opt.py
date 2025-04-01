@@ -13,9 +13,9 @@ class TestAfterOpt(unittest.TestCase):
     def setUpClass(cls):
         os.mkdir('output_tests')
         cls.create_files()
-        out = subprocess.run(f'poetry run python3 before_opt.py demand.csv prices.csv error_configs.csv output_tests --error_option 1', shell=True, stdout=subprocess.DEVNULL, stderr=subprocess.STDOUT)
+        out = subprocess.run(f'poetry run python3 before_opt.py demand.csv prices.csv error_configs.csv output_tests --res_duration 4 --error_option 1', shell=True, stdout=subprocess.DEVNULL, stderr=subprocess.STDOUT)
         cls.create_opt_results()
-        out = subprocess.run(f'poetry run python3 after_opt.py prices.csv output_tests', shell=True, stdout=subprocess.DEVNULL, stderr=subprocess.STDOUT)
+        out = subprocess.run(f'poetry run python3 after_opt.py prices.csv output_tests --res_duration 4', shell=True, stdout=subprocess.DEVNULL, stderr=subprocess.STDOUT)
 
     @classmethod
     def tearDownClass(cls):
@@ -56,7 +56,7 @@ class TestAfterOpt(unittest.TestCase):
         purc_sp = {'hour': [0, 1, 2],
                 'market': ['savings_plan', 'savings_plan', 'savings_plan'],
                 'value_active': [5, 5, 5],
-                'value_reserves': [5, 5, 5]}
+                'value_reserves': [5, 0, 0]}
 
         purc_sp_df = pd.DataFrame(purc_sp)
         purc_sp_df.to_csv('output_tests/optimizations/bias_0.0_sd_0.0/a/output/total_purchases_savings_plan.csv', index=False)
@@ -64,7 +64,7 @@ class TestAfterOpt(unittest.TestCase):
         purc_sp = {'hour': [0, 1, 2],
                 'market': ['savings_plan', 'savings_plan', 'savings_plan'],
                 'value_active': [10, 10, 10],
-                'value_reserves': [10, 10, 10]}
+                'value_reserves': [10, 0, 0]}
 
         purc_sp_df = pd.DataFrame(purc_sp)
         purc_sp_df.to_csv('output_tests/optimizations/bias_0.0_sd_0.0/b/output/total_purchases_savings_plan.csv', index=False)
@@ -73,7 +73,7 @@ class TestAfterOpt(unittest.TestCase):
         purc_sp = {'hour': [0, 1, 2],
                 'market': ['savings_plan', 'savings_plan', 'savings_plan'],
                 'value_active': [5, 5, 5],
-                'value_reserves': [5, 5, 5]}
+                'value_reserves': [5, 0, 0]}
 
         purc_sp_df = pd.DataFrame(purc_sp)
         purc_sp_df.to_csv('output_tests/optimizations/bias_0.1_sd_0.0/a/output/total_purchases_savings_plan.csv', index=False)
@@ -81,7 +81,7 @@ class TestAfterOpt(unittest.TestCase):
         purc_sp = {'hour': [0, 1, 2],
                 'market': ['savings_plan', 'savings_plan', 'savings_plan'],
                 'value_active': [10, 10, 10],
-                'value_reserves': [10, 10, 10]}
+                'value_reserves': [10, 0, 0]}
 
         purc_sp_df = pd.DataFrame(purc_sp)
         purc_sp_df.to_csv('output_tests/optimizations/bias_0.1_sd_0.0/b/output/total_purchases_savings_plan.csv', index=False)
@@ -90,7 +90,7 @@ class TestAfterOpt(unittest.TestCase):
         purc_sp = {'hour': [0, 1, 2],
                 'market': ['savings_plan', 'savings_plan', 'savings_plan'],
                 'value_active': [5, 5, 5],
-                'value_reserves': [5, 5, 5]}
+                'value_reserves': [5, 0, 0]}
 
         purc_sp_df = pd.DataFrame(purc_sp)
         purc_sp_df.to_csv('output_tests/optimizations/bias_0.2_sd_0.0/a/output/total_purchases_savings_plan.csv', index=False)
@@ -98,7 +98,7 @@ class TestAfterOpt(unittest.TestCase):
         purc_sp = {'hour': [0, 1, 2],
                 'market': ['savings_plan', 'savings_plan', 'savings_plan'],
                 'value_active': [10, 10, 10],
-                'value_reserves': [10, 10, 10]}
+                'value_reserves': [10, 0, 0]}
 
         purc_sp_df = pd.DataFrame(purc_sp)
         purc_sp_df.to_csv('output_tests/optimizations/bias_0.2_sd_0.0/b/output/total_purchases_savings_plan.csv', index=False)
@@ -187,5 +187,5 @@ class TestAfterOpt(unittest.TestCase):
 
         self.assertListEqual(list(results['bias_level']), [0.0, 0.1, 0.2])
         self.assertListEqual(list(results['sd_level']), [0.0, 0.0, 0.0])
-        self.assertListEqual(list(results['cost']), [96, 96, 96])
+        self.assertListEqual(list(results['cost']), [111, 111, 111])
         self.assertListEqual(list(results['relative_cost']), [1, 1, 1])
