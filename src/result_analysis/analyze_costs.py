@@ -24,14 +24,14 @@ def main(results_dir, output_dir, res_duration, base_scenario):
     costs_df = get_costs(results_dir, res_duration, base_scenario)
     costs_df.to_csv(os.path.join(output_dir, 'costs.csv'), index=False)
 
-    #plot_by_family(costs_df, output_dir)
     plot_by_scenario(costs_df, output_dir)
+    plot_by_scenario_opt(costs_df, output_dir)
 
 def get_costs(results_dir, res_duration, base_scenario):
     """ Creates a dataframe with the costs by family and scenario
     """
 
-    costs_df = pd.DataFrame(columns=['scenario', 'family', 'od_cost', 'sp_cost', 'total_cost', 'relative_cost', 'relative_cost_opt'])
+    costs_df = pd.DataFrame(columns=['scenario', 'family', 'od_cost', 'sp_cost', 'total_cost', 'relative_cost', 'total_cost_opt', 'relative_cost_opt'])
 
     allocations_path = os.path.join(results_dir, 'allocations')
     opt_path = os.path.join(results_dir, 'optimizations')
@@ -47,7 +47,13 @@ def get_costs(results_dir, res_duration, base_scenario):
 
         total_opt_cost = get_opt_cost(family, base_scenario_opt_path)
 
-        costs_df.loc[len(costs_df)] = [base_scenario, family, od_cost, sp_cost, total_cost, 1, total_cost/total_opt_cost]
+        if total_cost == 0 and total_opt_cost == 0:
+            relative_cost_opt = 1
+        else:
+            relative_cost_opt = total_cost/total_opt_cost
+
+
+        costs_df.loc[len(costs_df)] = [base_scenario, family, od_cost, sp_cost, total_cost, 1, total_opt_cost, relative_cost_opt]
 
     for scenario in os.listdir(allocations_path):
         if scenario != base_scenario:
@@ -65,12 +71,20 @@ def get_costs(results_dir, res_duration, base_scenario):
                 ]
                 base_cost = float(base_cost.iloc[0])
 
-                if base_cost == 0 and total_cost == 0:
+                base_cost_opt = costs_df.loc[
+                    (costs_df['scenario'] == base_scenario) & (costs_df['family'] == family), 
+                    'total_cost_opt'
+                ]
+                base_cost_opt = float(base_cost_opt.iloc[0])
+
+                if base_cost == 0 and total_cost == 0 and base_cost_opt == 0:
                     relative_cost = 1
+                    relative_cost_opt = 1
                 else:
                     relative_cost = total_cost / base_cost
+                    relative_cost_opt = total_cost/base_cost_opt
 
-                costs_df.loc[len(costs_df)] = [scenario, family, od_cost, sp_cost, total_cost, relative_cost, total_cost/total_opt_cost]
+                costs_df.loc[len(costs_df)] = [scenario, family, od_cost, sp_cost, total_cost, relative_cost, -1, relative_cost_opt]
     
     return costs_df
 
@@ -86,55 +100,44 @@ def read_alloc_files(family, scenario_path):
 
     return alloc_cost, total_purchases_sp
     
-#def plot_by_family(costs_df, output_dir):
 
 def get_opt_cost(family, base_scenario_opt_path):
-    results_opt_path = os.path.join(base_scenario_opt_path, family)
+    results_opt_dir = os.path.join(base_scenario_opt_path, family)
+    results_opt_path = os.path.join(results_opt_dir, 'output/result_cost.csv')
     results_opt = pd.read_csv(results_opt_path)
     total_opt_cost = results_opt.loc[0, 'total_cost']
 
     return total_opt_cost
 
 def plot_by_scenario(costs_df, output_dir):
-    # Set the style
-    sns.set_style("whitegrid")
-
-    # Create histogram plots for each scenario
+    sns.set_style("whitegrid")    
     scenarios = costs_df['scenario'].unique()
-    fig, axes = plt.subplots(nrows=1, ncols=len(scenarios), figsize=(5 * len(scenarios), 4), sharey=True)
+    
+    for scenario in scenarios:
+        plt.figure(figsize=(6, 4))
+        sns.histplot(costs_df[costs_df['scenario'] == scenario]['relative_cost'], bins=10, kde=True)
+        plt.title(f'Scenario {scenario}')
+        plt.xlabel('Total Cost (conpared to alloc heuristic with perfect forecast)')
+        plt.ylabel('Frequency')
+        
+        output_path = os.path.join(output_dir, f'scenario_{scenario}.png')
+        plt.savefig(output_path)
+        plt.close()
 
-    if len(scenarios) == 1:
-        axes = [axes]  # Ensure axes is iterable when there's only one scenario
-
-    for ax, scenario in zip(axes, scenarios):
-        sns.histplot(costs_df[costs_df['scenario'] == scenario]['relative_cost'], bins=10, kde=True, ax=ax)
-        ax.set_title(f'Scenario {scenario}')
-        ax.set_xlabel('Total Cost')
-        ax.set_ylabel('Frequency')
-
-    plt.tight_layout()
-    plt.show()
-
-def plot_by_scenario_opt(costs_df):
-    # Set the style
-    sns.set_style("whitegrid")
-
-    # Create histogram plots for each scenario
+def plot_by_scenario_opt(costs_df, output_dir):
+    sns.set_style("whitegrid")  
     scenarios = costs_df['scenario'].unique()
-    fig, axes = plt.subplots(nrows=1, ncols=len(scenarios), figsize=(5 * len(scenarios), 4), sharey=True)
-
-    if len(scenarios) == 1:
-        axes = [axes]  # Ensure axes is iterable when there's only one scenario
-
-    for ax, scenario in zip(axes, scenarios):
-        sns.histplot(costs_df[costs_df['scenario'] == scenario]['relative_cost_opt'], bins=10, kde=True, ax=ax)
-        ax.set_title(f'Scenario {scenario}')
-        ax.set_xlabel('Total Cost (relative to opt cost)')
-        ax.set_ylabel('Frequency')
-
-    plt.tight_layout()
-    plt.show()
-
+    
+    for scenario in scenarios:
+        plt.figure(figsize=(6, 4))
+        sns.histplot(costs_df[costs_df['scenario'] == scenario]['relative_cost_opt'], bins=10, kde=True)
+        plt.title(f'Scenario {scenario}')
+        plt.xlabel('Total Cost (compared to opt with perfect forecast)')
+        plt.ylabel('Frequency')
+        
+        output_path = os.path.join(output_dir, f'compared_to_opt_{scenario}.png')
+        plt.savefig(output_path)
+        plt.close()
 
 if __name__ == '__main__':
     main()
