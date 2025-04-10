@@ -1,4 +1,4 @@
-from mip import Model, xsum, BINARY, maximize
+from ortools.algorithms.python import knapsack_solver
 from src.allocator.allocator_aux import initiate_instance_allocation
 
 FLOAT_PRECISION = 10**5
@@ -11,12 +11,7 @@ def alloc(demand, prices, available_sp, market_option, res_duration):
 
     for t in range(len(available_sp)):
         demand_sel = {key: value[t] for key, value in demand.items()}
-        print('time:', t)
-        print('available sp', available_sp[t])
-        print('demand', demand_sel)
         packed_items = knapsack(demand_sel, prices, market_option, available_sp[t], res_duration)
-
-        print('itens in sp:', packed_items)
 
         for instance_type in packed_items:
             instance_allocation[market_option][instance_type][t] += 1
@@ -36,38 +31,35 @@ def knapsack(demand, prices, market_option, available_sp, res_duration):
     For each instance, its weight is the savings plans price and its value is the on-demand price.
     The objective is to maximize the value inside the knapsack, given its capacity. 
     """
-    
+
+    solver = knapsack_solver.KnapsackSolver(
+        knapsack_solver.SolverType.KNAPSACK_MULTIDIMENSION_BRANCH_AND_BOUND_SOLVER,
+        "KnapsackExample",
+    )
+
     # each instance as a string, if there is more than one instance of the same type, 
     # it appears more than once in the list
     instance_types = []
     for instance_type, quantity in demand.items():
         for i in range(quantity):
             instance_types.append(instance_type)
-
+    
     values = [] #on-demand prices
-    weights = [] #savings plans prices
+    weights = [[]] #savings plans prices
     for instance_type in instance_types:
         on_demand_price = prices[instance_type].on_demand
         sp_price = prices[instance_type].get_effective_hourly_rate(market_option, res_duration)
         values.append(int(round(on_demand_price * FLOAT_PRECISION, 0)))
-        weights.append(int(round(sp_price * FLOAT_PRECISION, 0)))
+        weights[0].append(int(round(sp_price * FLOAT_PRECISION, 0)))
 
-    # create model
-    m = Model()
+    capacities = [int(round(available_sp * FLOAT_PRECISION, 0))] #savings plans active value
 
-    # Number of items is len(values)
-    n = len(values)
-    # binary decision variables: x[i]=1 if item i is chosen
-    x = [m.add_var(var_type=BINARY) for i in range(n)]
+    solver.init(values, weights, capacities)
+    computed_value = solver.solve()
 
-    # objective: maximize total on-demand price (value)
-    m.objective = maximize(xsum(values[i] * x[i] for i in range(n)))
-
-    # capacity constraint: sum of sp_prices <= capacity
-    m += xsum(weights[i] for i in range(n)) <= available_sp
-
-    m.optimize()
-
-    packed_items = [instance_types[i] for i in range(n) if x[i].x >= 0.99]
+    packed_items = []
+    for i in range(len(values)):
+        if solver.best_solution_contains(i):
+            packed_items.append(instance_types[i])
 
     return packed_items

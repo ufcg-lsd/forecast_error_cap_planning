@@ -1,3 +1,13 @@
+""" Create a file and plots to help understing the results
+
+Create a file that has the individual costs by family and scenario.
+Plots one histogram for each scenario containing distribution of the 
+relative costs by family.
+Two sets of histograns are created, one with the relative costs to the heuristic
+cost with perfect forecast and another with the relative costs to the optimization
+cost with perfect forecast.
+"""
+
 # entender melhor os custos
     # dividir os custos por família --> grande tabela com custos finais de cada família para cada cenário
     # como é a distribuição dos custos? quantos aumentam? quantos ficam iguais?

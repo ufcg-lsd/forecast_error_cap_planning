@@ -24,6 +24,9 @@ def main(results_file_path, optimizations_dir, output_dir, base_scenario):
     results_df = pd.read_csv(results_file_path)
     results_df["relative_cost"] = results_df["cost"] / total_opt_cost
 
+    new_row = pd.DataFrame([{'bias_level': 0, 'sd_level': 0, 'cost': total_opt_cost, 'relative_cost': 1}])
+    results_df = pd.concat([new_row, results_df], ignore_index=True)
+
     results_df.to_csv(os.path.join(output_dir, 'resuts_comp_opt.csv'), index=False)
     
 def get_opt_cost(family, base_scenario_opt_path):

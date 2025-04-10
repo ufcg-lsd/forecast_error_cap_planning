@@ -49,8 +49,7 @@ version = "1.17.1"
 description = "Foreign Function Interface for Python calling C code."
 optional = false
 python-versions = ">=3.8"
-groups = ["dev"]
-markers = "python_version <= \"3.11\" and implementation_name == \"pypy\" or python_version >= \"3.12\" and implementation_name == \"pypy\""
+groups = ["main", "dev"]
 files = [
     {file = "cffi-1.17.1-cp310-cp310-macosx_10_9_x86_64.whl", hash = "sha256:df8b1c11f177bc2313ec4b2d46baec87a5f3e71fc8b45dab2ee7cae86d9aba14"},
     {file = "cffi-1.17.1-cp310-cp310-macosx_11_0_arm64.whl", hash = "sha256:8f2cdc858323644ab277e9bb925ad72ae0e67f69e804f4898c070998d50b1a67"},
@@ -120,6 +119,7 @@ files = [
     {file = "cffi-1.17.1-cp39-cp39-win_amd64.whl", hash = "sha256:d016c76bdd850f3c626af19b0542c9677ba156e4ee4fccfdd7848803533ef662"},
     {file = "cffi-1.17.1.tar.gz", hash = "sha256:1c39c6016c32bc48dd54561950ebd6836e1670f2ae46128f67cf49e789c52824"},
 ]
+markers = {main = "python_version <= \"3.11\" or python_version >= \"3.12\"", dev = "python_version <= \"3.11\" and implementation_name == \"pypy\" or python_version >= \"3.12\" and implementation_name == \"pypy\""}
 
 [package.dependencies]
 pycparser = "*"
@@ -743,6 +743,28 @@ files = [
 traitlets = "*"
 
 [[package]]
+name = "mip"
+version = "1.16rc0"
+description = "Python tools for Modeling and Solving Mixed-Integer Linear Programs (MIPs)"
+optional = false
+python-versions = "<3.13,>=3.7"
+groups = ["main"]
+markers = "python_version <= \"3.11\" or python_version >= \"3.12\""
+files = [
+    {file = "mip-1.16rc0-py3-none-any.whl", hash = "sha256:62e04c27bce56da94d070f6b03d9e342600d10f4016984334af7dae8c0f9fd09"},
+    {file = "mip-1.16rc0.tar.gz", hash = "sha256:f250083a41f4e1f61b6885041d64ed2a88bff5ead7165c329b5b31d07c517466"},
+]
+
+[package.dependencies]
+cffi = ">=1.15"
+
+[package.extras]
+gurobi = ["gurobipy (>=8)"]
+highs = ["highspy (>=1.5.3)"]
+numpy = ["numpy (==1.21.*)", "numpy (==1.24.*)", "numpy (>=1.25)"]
+test = ["matplotlib (==3.5.3)", "matplotlib (==3.6.2)", "matplotlib (>=3.7)", "networkx (==2.6.3)", "networkx (==2.8.8)", "pytest (>=7.4)"]
+
+[[package]]
 name = "nest-asyncio"
 version = "1.6.0"
 description = "Patch asyncio to allow nested event loops"
@@ -1233,12 +1255,12 @@ version = "2.22"
 description = "C parser in Python"
 optional = false
 python-versions = ">=3.8"
-groups = ["dev"]
-markers = "python_version <= \"3.11\" and implementation_name == \"pypy\" or python_version >= \"3.12\" and implementation_name == \"pypy\""
+groups = ["main", "dev"]
 files = [
     {file = "pycparser-2.22-py3-none-any.whl", hash = "sha256:c3702b6d3dd8c7abc1afa565d7e63d53a1d0bd86cdc24edd75470f4de499cfcc"},
     {file = "pycparser-2.22.tar.gz", hash = "sha256:491c8be9c040f5390f5bf44a5b07752bd07f56edf992381b05c701439eec10f6"},
 ]
+markers = {main = "python_version <= \"3.11\" or python_version >= \"3.12\"", dev = "python_version <= \"3.11\" and implementation_name == \"pypy\" or python_version >= \"3.12\" and implementation_name == \"pypy\""}
 
 [[package]]
 name = "pygments"
@@ -1572,5 +1594,5 @@ files = [
 
 [metadata]
 lock-version = "2.1"
-python-versions = "^3.10"
-content-hash = "8477b89599268836f4fb6dff21a625020d4645779c92f3cfb98f0f1bd43eac72"
+python-versions = ">=3.10,<3.13"
+content-hash = "718c5a2bfa1528cf763a1afb5465ffdd35fd0023989aca2eb6533b6c2246bf56"
