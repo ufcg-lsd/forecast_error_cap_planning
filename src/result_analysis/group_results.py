@@ -23,7 +23,21 @@ ALLOC_COST = _initialize_alloc_cost()
 @click.command()
 @click.argument('results_dir', type=click.Path(exists=True))
 @click.argument('output_dir', type=click.Path(exists=False))
-def main(results_dir, output_dir):
+@click.option(
+    '--process',
+    type=click.Choice(['allocations', 'demand', 'all'], case_sensitive=False),
+    default='all',
+    help='Specify which part of the data to process. Defaults to "all".'
+)
+def main(results_dir, output_dir, process):
+    if process in ['allocations', 'all']:
+        group_allocations(results_dir, output_dir)
+
+    if process in ['demand', 'all']:
+        group_demand(results_dir, output_dir)
+
+
+def group_allocations(results_dir, output_dir):
     allocations_dir = os.path.join(results_dir, 'allocations')
 
     for scenario in os.listdir(allocations_dir):
@@ -49,6 +63,15 @@ def write_output(output_dir, scenario):
 def clear_alloc_cost():
     global ALLOC_COST
     ALLOC_COST = _initialize_alloc_cost()
+
+def group_demand(results_dir, output_dir):
+    demand_dir = os.path.join(results_dir, 'forecasts')
+
+    for scenario in os.listdir(demand_dir):
+        scenario_demand_path = os.path.join(demand_dir, scenario)
+        scenario_demand = pd.read_csv(scenario_demand_path)
+        scenario_demand['num_instances'] = scenario_demand.iloc[:, 1:].sum(axis=1)
+        scenario_demand[['timestamp', 'num_instances']].to_csv(os.path.join(output_dir, f'{scenario}.csv'), index=False)
 
 if __name__ == '__main__':
     main()
