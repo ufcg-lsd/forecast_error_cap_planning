@@ -115,13 +115,12 @@ def iterate_sp_usage(scenario_dir, prices):
         alloc_instance_family = pd.read_csv(alloc_instance_path)
 
         alloc_instance_sp = alloc_instance_family[alloc_instance_family['market'] == 'r_no']
+        alloc_instance_sp = alloc_instance_sp.reset_index(drop=True)
 
         #sp_prices = {key: obj.hr_no_upfront for key, obj in prices.items()}
 
         cols_inst_types = alloc_instance_sp.columns[2:]
         for col in cols_inst_types:
-            print(alloc_instance_sp[col])
-            print(SP_USAGE['value_used'])
             SP_USAGE['value_used'] += alloc_instance_sp[col] * prices[col].hr_no_upfront
 
 
