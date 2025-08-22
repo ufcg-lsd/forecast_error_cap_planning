@@ -105,7 +105,7 @@ def group_sp_usage(results_dir, output_dir, prices_path):
         scenario_dir = os.path.join(allocations_dir, scenario)
         iterate_sp_usage(scenario_dir, prices)
         write_output(output_dir, scenario)
-        clear_alloc_cost()
+        clear_sp_usage()
 
 def iterate_sp_usage(scenario_dir, prices):
     global SP_USAGE
