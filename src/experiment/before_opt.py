@@ -27,7 +27,9 @@ def main(demand_path, prices_path, error_configs_path, res_duration, error_optio
         os.mkdir(optimizations_dir)
     set_up_multiple_scenarios(forecasts_dir, prices_path, res_duration, optimizations_dir)
 
-    print('Path for optimizations:', optimizations_dir)
+    absolute_path_opt = f'{os.path.abspath(optimizations_dir)}/'
+
+    print('Path for optimizations:', absolute_path_opt)
 
 if __name__ == '__main__':
     main()
