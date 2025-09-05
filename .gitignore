@@ -14,3 +14,4 @@ src/experiment/optimization
 src/result_analysis/output/*
 !src/result_analysis/output/.gitkeep
 src/result_analysis/util/__pycache__
+src/util/*.csv
