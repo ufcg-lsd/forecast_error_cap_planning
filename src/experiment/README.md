@@ -47,13 +47,13 @@ The final step, after the optimizations, is to run the allocator, that calculate
 To run:
 
 ```
-poetry run python3 after_opt.py {path_of_prices} {path_of_output} {path_of_results_file} --base_scenario {name_of_base_scenario}
+poetry run python3 after_opt.py {path_of_prices} {path_of_output} --base_scenario {name_of_base_scenario}
 ```
 
 An example:
 
 ```
-poetry run python3 after_opt.py data/prices.csv output/exec_2023_spot output/exec_2023_spot/results.csv --base_scenario bias_0.0_sd_0.0
+poetry run python3 after_opt.py data/prices.csv output/exec_2023_spot --base_scenario bias_0.0_sd_0.0
 ```
 
 ## Output Directory
