@@ -1,6 +1,6 @@
 EXEC_PATH="$1"
 REMOTE_BASE_DIR="/home/ec2-user/forecast_error_cap_planning/src/experiment/output/"
-MAIN_PATH="${REMOTE_BASE_DIR}/${EXEC_PATH}"
+MAIN_PATH="${REMOTE_BASE_DIR}/${EXEC_PATH}/optimizations/"
 
 EC2_IP="172.31.21.41"
 REMOTE_USER="ec2-user"
