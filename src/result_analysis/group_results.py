@@ -59,7 +59,7 @@ def main(results_dir, output_dir, prices_path, process):
         group_allocations(results_dir, output_dir)
 
     if process in ['demand', 'all']:
-        group_demand(results_dir, output_dir)
+        group_demand(results_dir, output_dir, prices_path)
     
     if process in ['sp_usage', 'all']:
         if not prices_path:
@@ -137,14 +137,32 @@ def clear_sp_usage():
 
 # Demand (or forecasts)
 
-def group_demand(results_dir, output_dir):
+def group_demand(results_dir, output_dir, prices_path):
     demand_dir = os.path.join(results_dir, 'forecasts')
+
+    prices = read_prices(prices_path)
 
     for scenario in os.listdir(demand_dir):
         scenario_demand_path = os.path.join(demand_dir, scenario)
         scenario_demand = pd.read_csv(scenario_demand_path)
-        scenario_demand['num_instances'] = scenario_demand.iloc[:, 1:].sum(axis=1)
-        scenario_demand[['timestamp', 'num_instances']].to_csv(os.path.join(output_dir, f'{scenario}.csv'), index=False)
+
+        # demand in number of instances
+        dem_num_instances = pd.DataFrame()
+        dem_num_instances['timestamp'] = scenario_demand['timestamp']
+        dem_num_instances['num_instances'] = scenario_demand.iloc[:, 1:].sum(axis=1)
+        dem_num_instances.to_csv(os.path.join(output_dir, f'{scenario.removesuffix('.csv')}.csv'), index=False)
+
+        #demand in sp cost
+        dem_sp_cost = pd.DataFrame()
+        dem_sp_cost['timestamp'] = scenario_demand['timestamp']
+        dem_sp_cost['value'] = [0 for _ in range(len(dem_sp_cost))]
+
+        cols_inst_types = scenario_demand.columns[2:]
+        for col in cols_inst_types:
+            if col in prices:
+                dem_sp_cost['value'] += scenario_demand[col] * prices[col].hr_no_upfront
+
+        dem_sp_cost.to_csv(os.path.join(output_dir, f'{scenario.removesuffix('.csv')}_sp_cost.csv'), index=False)
 
 if __name__ == '__main__':
     main()
