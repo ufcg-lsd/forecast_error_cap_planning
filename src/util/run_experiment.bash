@@ -1,18 +1,20 @@
 #!/bin/bash
 
-# Usage: ./run_experiment.sh <EC2_IP> <LOCAL_DIR> <DEMAND_FILE>
-# Example: ./run_experiment.sh 172.31.21.41 exec_2_1_2023_spot 2023_with_spot.csv
+# Usage: ./run_experiment.sh <EXEC_DIR> <DEMAND_FILE>
+# Example: ./run_experiment.sh exec_2_1_2023_spot 2023_with_spot.csv
 
-EC2_IP="$1"
-LOCAL_DIR="$2"
-DEMAND_FILE="$3"
+EXEC_DIR="$1"
+DEMAND_FILE="$2"
+
+EC2_IP="172.31.21.41"
 PEM_KEY="~/.ssh/solr.pem"
-LOCAL_BASE_DIR="~/Documents/data_experiments_forecast"
 REMOTE_USER="ec2-user"
-REMOTE_BASE_DIR="~/forecast_error_cap_planning/src/experiment"
 
-if [ -z "$EC2_IP" ] || [ -z "$LOCAL_DIR" ] || [ -z "$DEMAND_FILE" ]; then
-    echo "Usage: $0 <EC2_IP> <LOCAL_DIR> <DEMAND_FILE>"
+LOCAL_BASE_DIR="~/Documents/data_experiments_forecast"
+REMOTE_BASE_DIR="/home/ec2-user/forecast_error_cap_planning/src/experiment"
+
+if [ -z "$EXEC_DIR" ] || [ -z "$DEMAND_FILE" ]; then
+    echo "Usage: <EXEC_DIR> <DEMAND_FILE>"
     exit 1
 fi
 
@@ -21,27 +23,23 @@ scp -r -i "$PEM_KEY" "$LOCAL_BASE_DIR/$LOCAL_DIR" \
     $REMOTE_USER@"$EC2_IP":"$REMOTE_BASE_DIR/data"
 
 echo ">>> Running commands on $EC2_IP..."
-ssh -i "$PEM_KEY" $REMOTE_USER@"$EC2_IP" bash << EOF
-    set -e
-    cd ~/forecast_error_cap_planning
-
+ssh -i "$PEM_KEY" $REMOTE_USER@"$EC2_IP" << EOF
     echo ">>> Creating output directory..."
-    mkdir -p src/experiment/output/$LOCAL_DIR
+    mkdir -p $REMOTE_BASE_DIR/output/$EXEC_DIR
 
     echo ">>> Starting Docker..."
     sudo systemctl start docker
 
     echo ">>> Running before_opt.py..."
-    poetry run python3 src/experiment/before_opt.py \
-        src/experiment/data/$LOCAL_DIR/$DEMAND_FILE \
-        src/experiment/data/$LOCAL_DIR/prices.csv \
-        src/experiment/data/$LOCAL_DIR/error_configs.csv \
-        src/experiment/output/$LOCAL_DIR
+    poetry run python3 $REMOTE_BASE_DIR/before_opt.py \
+        $REMOTE_BASE_DIR/data/$EXEC_DIR/$DEMAND_FILE \
+        $REMOTE_BASE_DIR/data/$EXEC_DIR/prices.csv \
+        $REMOTE_BASE_DIR/data/$EXEC_DIR/error_configs.csv \
+        $REMOTE_BASE_DIR/output/$EXEC_DIR
 
     echo ">>> Running optimization script in background..."
-    nohup sudo bash src/experiment/run_opt.sh \
-        /home/ec2-user/forecast_error_cap_planning/src/experiment/output/$LOCAL_DIR/optimizations/ \
-        > ~/run_opt_${LOCAL_DIR}.log 2>&1 &
+    nohup sudo bash $REMOTE_BASE_DIR/run_opt.sh \
+        $REMOTE_BASE_DIR/output/$EXEC_DIR/optimizations/
 EOF
 
-echo ">>> Done! Experiment $LOCAL_DIR with demand file $DEMAND_FILE started on $EC2_IP."
+echo ">>> Done! Experiment $EXEC_DIR with demand file $DEMAND_FILE started on $EC2_IP."
