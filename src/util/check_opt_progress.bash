@@ -5,6 +5,11 @@ MAIN_PATH="${REMOTE_BASE_DIR}/${EXEC_PATH}/optimizations/"
 EC2_IP="172.31.21.41"
 REMOTE_USER="ec2-user"
 
+if [ -z "$EXEC_PATH" ]; then
+    echo "Usage: <EXEC_PATH>"
+    exit 1
+fi
+
 ssh -i ~/.ssh/solr.pem $REMOTE_USER@"$EC2_IP" << EOF
     total_num_families=0
     optimized_families=0
