@@ -39,41 +39,51 @@ def main(results_dir, output_dir, prices_path,):
 
 def get_scenario_info(scenario_path, res_duration, prices, results_df):
     all_markets_cost = 0
-    on_demand_cost = 0
-    savings_plans_cost = 0
+    od_cost = 0
+    sp_cost = 0
     sp_used = 0
     sp_idle = 0
 
     for family in os.listdir(scenario_path):
         family_path = f'{scenario_path}/{family}'
-        cost_allocation = pd.read_csv(f'{family_path}/alloc_cost.csv')
-        total_purchases_sp = pd.read_csv(f'{family_path}/total_purchases_sp.csv')
-        alloc_instance_family = pd.read_csv(f'{family_path}/alloc_instance.csv')
+        family_od_cost, family_sp_cost, family_sp_used, family_sp_idle = process_family_costs(family_path, res_duration, prices)
+        od_cost += family_od_cost
+        sp_cost += family_sp_cost
+        sp_used += family_sp_used
+        sp_idle += family_sp_idle
 
-        on_demand_cost += sum(cost_allocation['OnDemand'])
-        savings_plans_cost += sum(total_purchases_sp['value_reserves']) * res_duration
-        all_markets_cost += on_demand_cost + savings_plans_cost
+    all_markets_cost = od_cost + sp_cost
 
-        alloc_instance_sp = alloc_instance_family[alloc_instance_family['market'] == 'r_no']
-        alloc_instance_sp = alloc_instance_sp.reset_index(drop=True)
-
-        cols_inst_types = alloc_instance_sp.columns[2:]
-        for col in cols_inst_types:
-            sp_used += sum(alloc_instance_sp[col]) * prices[col].hr_no_upfront
-        
-        sp_idle += savings_plans_cost - sp_used
-    
     results_df.loc[len(results_df)] = [
         scenario_path.split('/')[-1].split('_')[1],
         scenario_path.split('/')[-1].split('_')[3],
         all_markets_cost,
-        on_demand_cost,
-        savings_plans_cost,
+        od_cost,
+        sp_cost,
         sp_used,
         sp_idle
     ]
 
     return results_df
+
+def process_family_costs(family_path, res_duration, prices):
+    cost_allocation = pd.read_csv(f'{family_path}/alloc_cost.csv')
+    total_purchases_sp = pd.read_csv(f'{family_path}/total_purchases_sp.csv')
+    alloc_instance_family = pd.read_csv(f'{family_path}/alloc_instance.csv')
+
+    on_demand_cost = sum(cost_allocation['OnDemand'])
+    savings_plans_cost = sum(total_purchases_sp['value_reserves']) * res_duration
+
+    alloc_instance_sp = alloc_instance_family[alloc_instance_family['market'] == 'r_no'].reset_index(drop=True)
+    cols_inst_types = alloc_instance_sp.columns[2:]
+    
+    sp_used = 0
+    for col in cols_inst_types:
+        sp_used += sum(alloc_instance_sp[col]) * prices[col].hr_no_upfront
+
+    sp_idle = savings_plans_cost - sp_used
+
+    return on_demand_cost, savings_plans_cost, sp_used, sp_idle
 
 # total_cost, od_cost, sp_cost 
 # sp_used, sp_idle
