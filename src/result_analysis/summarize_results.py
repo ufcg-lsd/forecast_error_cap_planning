@@ -18,17 +18,27 @@ def _initialize_results_summary():
         'od_cost': [],
         'sp_cost': [],
         'sp_used': [],
-        'sp_idle': []
+        'sp_idle': [],
+        'total_used': []
     })
 
 @click.command()
 @click.argument('results_dir', type=click.Path(exists=True))
-@click.argument('output_dir', type=click.Path(exists=False))
+@click.argument('output_file', type=click.Path(exists=False))
 @click.argument('prices_path', type=click.Path(exists=False))
 @click.option('--res_duration',
               type=int,
               default=8760)
-def main(results_dir, output_dir, prices_path, res_duration):
+@click.option('--base_scenario',
+              type=str,
+              default='bias_0.0_sd_0.0')
+@click.option(
+    '--process',
+    type=click.Choice(['abs_costs', 'relative_costs', 'all'], case_sensitive=False),
+    default='all',
+    help='Specify which data should be processed. Defaults to "all".'
+)
+def main(results_dir, output_file, prices_path, res_duration, base_scenario, process):
     prices = read_prices(prices_path)
     results_df = _initialize_results_summary()
 
@@ -37,8 +47,14 @@ def main(results_dir, output_dir, prices_path, res_duration):
     for scenario in os.listdir(results_dir):
         scenario_path = os.path.join(results_dir, scenario)
         results_df = get_scenario_info(scenario_path, res_duration, prices, results_df)
+    
+    if process in ['relative_costs', 'all']:
+        results_df = get_relative_costs(results_df, base_scenario)
+        if process == 'relative_costs':
+            results_df = results_df.drop(columns=['total_cost', 'od_cost', 'sp_cost', 'sp_used', 'sp_idle', 'total_used'])
 
-    results_df.to_csv(os.path.join(output_dir, 'summary_results.csv'), index=False)
+    results_df = results_df.sort_values(by=['bias_level', 'sd_level'])
+    results_df.to_csv(output_file, index=False)
 
 def get_scenario_info(scenario_path, res_duration, prices, results_df):
     od_cost, sp_cost, sp_used, sp_idle = 0, 0, 0, 0
@@ -51,16 +67,18 @@ def get_scenario_info(scenario_path, res_duration, prices, results_df):
         sp_used += family_sp_used
         sp_idle += family_sp_idle
 
-    all_markets_cost = od_cost + sp_cost
+    total_cost = od_cost + sp_cost
+    total_used = sp_used + od_cost
 
     results_df.loc[len(results_df)] = [
         scenario_path.split('/')[-1].split('_')[1],
         scenario_path.split('/')[-1].split('_')[3],
-        all_markets_cost,
+        total_cost,
         od_cost,
         sp_cost,
         sp_used,
-        sp_idle
+        sp_idle,
+        total_used
     ]
 
     return results_df
@@ -74,7 +92,6 @@ def process_family_costs(family_path, res_duration, prices):
     savings_plans_cost = total_purchases_sp['value_reserves'].sum() * res_duration
 
     alloc_instance_sp = alloc_instance_family[alloc_instance_family['market'] == 'r_no']
-    cols_inst_types = alloc_instance_sp.columns[2:]
 
     if not alloc_instance_sp.empty:
         inst_cols = alloc_instance_sp.columns[2:]
@@ -86,8 +103,27 @@ def process_family_costs(family_path, res_duration, prices):
 
     return on_demand_cost, savings_plans_cost, sp_used, sp_idle
 
-# total_cost, od_cost, sp_cost 
-# sp_used, sp_idle
+def get_relative_costs(results_df, base_scenario):
+    base_scenario_row = results_df[(results_df['bias_level'] == base_scenario.split('_')[1]) & (results_df['sd_level'] == base_scenario.split('_')[3])]
+    if base_scenario_row.empty:
+        raise ValueError(f"Base scenario '{base_scenario}' not found in the results.")
+    
+    base_sp_idle = base_scenario_row['sp_idle'].values[0]
+    base_total_used = base_scenario_row['total_used'].values[0]
+    base_total_cost = base_scenario_row['total_cost'].values[0]
+
+    results_df['diff_sp_idle'] = results_df['sp_idle'] - base_sp_idle
+    results_df['diff_total_used'] = results_df['total_used'] - base_total_used
+    results_df['diff_total_cost'] = results_df['total_cost'] - base_total_cost
+
+    results_df['rel_sp_idle'] = round((results_df['diff_sp_idle'] / base_sp_idle) * 100, 2) if base_sp_idle != 0 else float('nan')
+    results_df['rel_total_used'] = round((results_df['diff_total_used'] / base_total_used) * 100, 2) if base_total_used != 0 else float('nan')
+
+    results_df['rel_tc_sp_idle'] = round((results_df['diff_sp_idle'] / base_sp_idle) * 100, 2) if base_sp_idle != 0 else float('nan')
+    results_df['rel_tc_total_used'] = round((results_df['diff_total_used'] / base_total_used) * 100, 2) if base_total_used != 0 else float('nan')
+    results_df['rel_total_cost'] = round((results_df['diff_total_cost'] / base_total_cost) * 100, 2) if base_total_cost != 0 else float('nan')
+
+    return results_df
 
 if __name__ == '__main__':
     main()
