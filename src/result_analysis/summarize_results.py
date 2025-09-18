@@ -71,8 +71,8 @@ def get_scenario_info(scenario_path, res_duration, prices, results_df):
     total_used = sp_used + od_cost
 
     results_df.loc[len(results_df)] = [
-        scenario_path.split('/')[-1].split('_')[1],
-        scenario_path.split('/')[-1].split('_')[3],
+        float(scenario_path.split('/')[-1].split('_')[1]),
+        float(scenario_path.split('/')[-1].split('_')[3]),
         total_cost,
         od_cost,
         sp_cost,
@@ -104,7 +104,7 @@ def process_family_costs(family_path, res_duration, prices):
     return on_demand_cost, savings_plans_cost, sp_used, sp_idle
 
 def get_relative_costs(results_df, base_scenario):
-    base_scenario_row = results_df[(results_df['bias_level'] == base_scenario.split('_')[1]) & (results_df['sd_level'] == base_scenario.split('_')[3])]
+    base_scenario_row = results_df[(results_df['bias_level'] == float(base_scenario.split('_')[1])) & (results_df['sd_level'] == float(base_scenario.split('_')[3]))]
     if base_scenario_row.empty:
         raise ValueError(f"Base scenario '{base_scenario}' not found in the results.")
     
@@ -119,8 +119,8 @@ def get_relative_costs(results_df, base_scenario):
     results_df['rel_sp_idle'] = round((results_df['diff_sp_idle'] / base_sp_idle) * 100, 2) if base_sp_idle != 0 else float('nan')
     results_df['rel_total_used'] = round((results_df['diff_total_used'] / base_total_used) * 100, 2) if base_total_used != 0 else float('nan')
 
-    results_df['rel_tc_sp_idle'] = round((results_df['diff_sp_idle'] / base_sp_idle) * 100, 2) if base_sp_idle != 0 else float('nan')
-    results_df['rel_tc_total_used'] = round((results_df['diff_total_used'] / base_total_used) * 100, 2) if base_total_used != 0 else float('nan')
+    results_df['rel_tc_sp_idle'] = round((results_df['diff_sp_idle'] / base_total_cost) * 100, 2) if base_total_cost != 0 else float('nan')
+    results_df['rel_tc_total_used'] = round((results_df['diff_total_used'] / base_total_cost) * 100, 2) if base_total_cost != 0 else float('nan')
     results_df['rel_total_cost'] = round((results_df['diff_total_cost'] / base_total_cost) * 100, 2) if base_total_cost != 0 else float('nan')
 
     return results_df
