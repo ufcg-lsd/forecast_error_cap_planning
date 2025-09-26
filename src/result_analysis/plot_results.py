@@ -36,7 +36,7 @@ def create_plot(results_df, mode='bias_and_sd', on_demand_cost=None, plot_summar
     Returns:
         (fig, ax) tuple.
     """
-    fig, ax = plt.subplots()
+    fig, ax = plt.subplots(figsize=(8, 6))
 
     if mode == 'bias_and_sd':
         plot_bias_and_sd(results_df, ax)
